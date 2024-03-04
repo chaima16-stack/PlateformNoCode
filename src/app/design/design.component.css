@@ -1,0 +1,167 @@
+@import '~typeface-open-sans';
+.container {
+    display: flex;
+    flex-direction: row;
+  }
+  .sidebar {
+    min-height: 100vh;
+    background-color: white;
+    padding-top: 20px;
+    border-bottom: 1px solid #ccc;
+    position: relative;
+    overflow-y: auto; 
+
+ 
+  }
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+    
+}
+
+.parent,
+.firstItem {
+  cursor: pointer;
+  font-family: 'Roboto';
+  font-weight: 540;
+  font-size: 16px;
+  margin-left: -16px;
+  padding-left: 10px;
+
+}
+.arrow{
+    font-weight: bold;
+}
+.divider {
+    margin-left: 0px;
+    width: 100%;
+    border-bottom: 1px solid #ccc; 
+}
+.item-margin{
+    margin-top: -16px;
+
+}
+.itemTaken{
+    height: 35px;
+    cursor: pointer;
+    font-family: 'Roboto';
+    font-weight:540;
+    font-size: 16px;
+    padding-left: 20px;
+}
+.itemTaken.active {
+    position: relative; 
+    background-color: #1F1F1F;
+    color: #fff;
+    height: 30px;
+    width:100%;
+  }
+  .icon-itemTaken{
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+
+.subElement{
+    
+    font-family: 'Abhaya Libre';
+    font-size: 14px;
+    
+   
+}
+.marge{
+    padding-left: 43px;
+}
+.icon-style{
+       margin-left: 5px;
+       margin-right: 10px;
+   }
+.firstelement ul li ul li ul li{
+    margin-left: 29px;
+}
+
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .grid-item {
+    font-family: 'Abhaya Libre';
+    font-size: 13px;
+    flex: 0 0 calc(33.33% - 20px); 
+    margin: 10px; 
+    text-align: center; 
+  }
+  
+  .frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    border: 2px solid #ccc; 
+    padding: 10px; 
+    box-sizing: border-box; 
+    cursor: move;
+  }
+  
+  .icon-style1 {
+    font-size: 18px; 
+  }
+  
+  .subItemText {
+    margin-top: 8px; 
+  }
+
+
+  .main {
+    position: relative;
+  }
+  
+  .rectangle {
+    width: 90%; 
+    height: 80vh; 
+    background-color: white;
+    border: 1px dashed #ccc; 
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  
+  @media screen and (max-width: 768px) {
+    .rectangle {
+      width: 70%; 
+      height: 70vh; 
+    }
+  }
+  
+  
+  @media (max-width: 767.98px) {
+    .sidebar {
+      height: auto;
+      border-bottom: none;
+    }
+  
+   
+  
+    .grid-item {
+      flex: 0 0 100%;
+    }
+  }
+  
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .sidebar {
+      height: auto;
+      border-bottom: none;
+    }
+  
+    
+
+    }
+    

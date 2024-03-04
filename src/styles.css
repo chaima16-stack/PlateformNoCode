@@ -1,6 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 @import "~bootstrap/dist/css/bootstrap.min.css";
+@font-face {
+    font-family: 'Abhaya Libre';
+    src: url('/assets/fonts/Abhaya_libre/AbhayaLibre-Regular.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('/assets/fonts/Roboto/Roboto-Bold.ttf') format('truetype');
+    font-weight: bold; /* Utilisez 'bold' pour le gras */
+    font-style: normal; /* Utilisez 'normal' pour le style normal */
+}
+  
 .background{
-    background-color: #FAFAFA;
+    background-color: #D0D7E7;
 }
