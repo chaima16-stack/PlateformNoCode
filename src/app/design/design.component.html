@@ -31,22 +31,22 @@
                 </div>
                 </div>
                 <ul *ngIf="itemTaken.showSubItems">
-                  <li *ngFor="let subItem of itemTaken.subItems" class="subElement">
+                  <li *ngFor="let subItem of listItem" class="subElement">
                     <div class="row">
                       <div class="col-md-10 col-10 col-sm-10 marge">
                     <i class="icon-style " [ngClass]="{
-    'bi bi-fonts': subItem=='Text',
-    'bi bi-input-cursor-text': subItem=='Input',
-    'bi bi-hand-index-thumb-fill': subItem=='Button',
-    'bi bi-person-circle': subItem=='Icon',
-    'bi bi-text-indent-left': subItem=='Data List',
-    'bi bi-image': subItem=='Image' 
+    'bi bi-fonts': subItem.type=='Text',
+    'bi bi-input-cursor-text': subItem.type=='Input',
+    'bi bi-hand-index-thumb-fill': subItem.type=='Button',
+    'bi bi-person-circle': subItem.type=='Icon',
+    'bi bi-text-indent-left': subItem.type=='Data List',
+    'bi bi-image': subItem.type=='Image' 
   }"></i>
-                    {{ subItem }}
+                    {{ subItem.type }}
                     </div>
                     <div class="col-md-2 col-2 col-sm-2">
 
-                      <i class="bi bi-trash3-fill" style="color: red;"></i>
+                      <i class="bi bi-trash3-fill" style="color: red;" (click)="delete(subItem)"></i>
                     </div>
                     </div>
                   </li>
@@ -79,7 +79,7 @@
               </div>
               <ul *ngIf="item.showSubItems" class="grid-container">
                 <li *ngFor="let subItem of item.subItems" class="grid-item">
-                  <div class="frame">
+                  <div class="frame"  draggable="true" (dragstart)="onDragStart($event,subItem)" (dragend)="UpdateList()" >
                     <i class="icon-style1"
                       [ngClass]="{
                         'bi bi-fonts': subItem=='Text',
@@ -102,7 +102,16 @@
       </div>
     </nav>
     <main class="col-md-10 col-8 col-sm-9 ms-sm-auto col-lg-9 px-md-4">
-      <div class="rectangle"></div>
+      <div id="page" class="rectangle" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+
+        <div *ngFor="let button of buttons" [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" [draggable]="true">Button</div>
+         <div *ngFor="let text of texts" [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true">Text</div>
+         <div *ngFor="let input of inputs" [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true">Type Here</div>
+         <div *ngFor="let icon of icons" [ngClass]="{'icon-like':draggedIcon}"   [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true">Text</div>
+         <div *ngFor="let image of images" [ngClass]="{'image-like':draggedImage}"   [ngStyle]="image.style" (dragstart)="ModifyDrag($event,'Image')" [draggable]="true">Text</div>
+         <div *ngFor="let list of lists" [ngClass]="{'list-like':draggedlist}"   [ngStyle]="list.style" (dragstart)="ModifyDrag($event,'Data List')" [draggable]="true">Text</div>
+
+      </div>
     </main>
   </div>
 </div>

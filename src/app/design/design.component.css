@@ -106,7 +106,7 @@
     border: 2px solid #ccc; 
     padding: 10px; 
     box-sizing: border-box; 
-    cursor: move;
+    cursor:grabbing;
   }
   
   .icon-style1 {
@@ -132,8 +132,41 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
+
+  .buttonsdropped {
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+    padding: 0.75rem 1rem;
+    width: 180px;
+    border-radius: 20px;
+
+  }
+  .input-like {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid #5d5c5c;
+    border-radius: 20px;
+    content: attr(placeholder);
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #999; 
+    width: 350px;
+    height: 50px;
+    background-color: #F8F9FB;
+    padding-top: 13px;
+  }
   
+  .texte {
+    font-family: "Arial", sans-serif;
+    font-size: 24px;
+    color: #333; 
+    line-height: 1.5;
+    text-align: center; 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
+    letter-spacing: 1px; 
   
+  }
   @media screen and (max-width: 768px) {
     .rectangle {
       width: 70%; 
