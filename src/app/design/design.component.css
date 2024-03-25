@@ -53,12 +53,18 @@
     font-size: 16px;
     padding-left: 20px;
 }
+.plus-icon{
+  float: right;
+  color: red; 
+  cursor: pointer;
+  font-size: 20px;
+}
 .itemTaken.active {
     position: relative; 
     background-color: #1F1F1F;
     color: #fff;
     height: 30px;
-    width:100%;
+    padding-left: 20px;
   }
   .icon-itemTaken{
     margin-right: 10px;
@@ -137,8 +143,9 @@
     font-size: 0.9rem;
     letter-spacing: 0.05rem;
     padding: 0.75rem 1rem;
-    width: 180px;
-    border-radius: 20px;
+    width: 150px;
+    height: 45px;
+    border-radius: 5px;
 
   }
   .input-like {
@@ -151,10 +158,11 @@
     left: 12px;
     transform: translateY(-50%);
     color: #999; 
-    width: 350px;
-    height: 50px;
+    width: 388px;
+    height: 45px;
     background-color: #F8F9FB;
     padding-top: 13px;
+    padding-bottom: 13px;
   }
   
   .texte {
@@ -167,6 +175,102 @@
     letter-spacing: 1px; 
   
   }
+  .icon-like{
+   font-size: 25px;
+  }
+  .popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    color: #fff;
+    z-index: 9999;
+    width: 300px;
+  }
+  .close{
+    padding-right: 10px;
+    color: white;
+  }
+  .popup-header  {
+    margin-bottom: 10px;
+    font-size: 20px;
+    padding-left: 10px;
+  }
+  
+  .popup-content {
+    background-color: #444;
+    padding: 20px 10px 40px 10px;
+  }
+  .popup-icon{
+    background-color: #444;
+    padding: 20px 10px 40px 25px;
+  }
+  .popup-input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #888; /* Bordure grise */
+    border-radius: 3px;
+  }
+  .popup-button {
+    width: 100%; 
+    background-color: #777;
+    color: #fff;
+    border: 1px solid #888; 
+    border-radius: 3px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .popup-button:hover {
+    background-color: #555;
+    border-color: #FEC022; 
+  }
+.textPop{
+  font-size: 30px ;
+  text-align: center;
+}
+
+.pagination-buttons {
+  display: flex;
+  justify-content: flex-end; /* Aligner les flèches à droite */
+}
+
+.arrow-icon {
+  width: 30px; 
+  height: 30px; 
+  background-color: transparent; 
+  border: none; 
+  cursor: pointer; 
+}
+
+
+.left-arrow {
+  border-width: 15px 0 15px 20px; 
+  border-color: transparent transparent transparent white; 
+}
+
+.right-arrow {
+  border-width: 15px 20px 15px 0;
+  border-color: transparent white transparent transparent; 
+}
+
+.icon-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.icon-option {
+  margin: 5px;
+  cursor: pointer;
+}
+
+.icon-option i {
+  font-size: 24px;
+}
   @media screen and (max-width: 768px) {
     .rectangle {
       width: 70%; 

@@ -27,7 +27,7 @@
                   <i
                     [ngClass]="{'bi bi-chevron-right': !itemTaken.showSubItems, 'bi bi-chevron-down': itemTaken.showSubItems}"></i>
                   <i class="icon-itemTaken bi bi-window-fullscreen"></i>
-                  {{ itemTaken.name }}
+                  {{ itemTaken.name }} <i class="bi bi-plus plus-icon" ></i>
                 </div>
                 </div>
                 <ul *ngIf="itemTaken.showSubItems">
@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-md-2 col-2 col-sm-2">
 
-                      <i class="bi bi-trash3-fill" style="color: red;" (click)="delete(subItem)"></i>
+                      <i class="bi bi-trash3-fill" style="color: red; cursor: pointer;" (click)="delete(subItem)"></i>
                     </div>
                     </div>
                   </li>
@@ -79,7 +79,7 @@
               </div>
               <ul *ngIf="item.showSubItems" class="grid-container">
                 <li *ngFor="let subItem of item.subItems" class="grid-item">
-                  <div class="frame"  draggable="true" (dragstart)="onDragStart($event,subItem)" (dragend)="UpdateList()" >
+                  <div class="frame"  draggable="true" (dragstart)="onDragStart($event,subItem)" (dragend)="UpdateList($event,subitem)" >
                     <i class="icon-style1"
                       [ngClass]="{
                         'bi bi-fonts': subItem=='Text',
@@ -104,15 +104,68 @@
     <main class="col-md-10 col-8 col-sm-9 ms-sm-auto col-lg-9 px-md-4">
       <div id="page" class="rectangle" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
 
-        <div *ngFor="let button of buttons" [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" [draggable]="true">Button</div>
-         <div *ngFor="let text of texts" [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true">Text</div>
-         <div *ngFor="let input of inputs" [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true">Type Here</div>
-         <div *ngFor="let icon of icons" [ngClass]="{'icon-like':draggedIcon}"   [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true">Text</div>
+        <div *ngFor="let button of buttons" [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" (dragend)="UpdateList($event,'Button')" [draggable]="true" (click)="showPopUp($event,'popup','close','Button')">{{textButton}}</div>
+         <div *ngFor="let text of texts" [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true" (dragend)="UpdateList($event,'Text')" (click)="showPopUp($event,'popup','close','Text')">{{textlabel}}</div>
+         <div *ngFor="let input of inputs" [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true" (dragend)="UpdateList($event,'Input')" (click)="showPopUp($event,'popup','close','Input')">{{textinput}}</div>
+         <div *ngFor="let icon of icons" [ngClass]="{'icon-like':draggedIcon}"   [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true" (click)="showIcon($event)" (dragend)="UpdateList($event,icon.type)"><i class="bi bi-{{icon.InnerHtml}}"></i></div>
          <div *ngFor="let image of images" [ngClass]="{'image-like':draggedImage}"   [ngStyle]="image.style" (dragstart)="ModifyDrag($event,'Image')" [draggable]="true">Text</div>
          <div *ngFor="let list of lists" [ngClass]="{'list-like':draggedlist}"   [ngStyle]="list.style" (dragstart)="ModifyDrag($event,'Data List')" [draggable]="true">Text</div>
-
-      </div>
+        </div>
     </main>
   </div>
 </div>
+<div id="popup" class="popup">
+<div id="draggable" class="draggablePop">
+  <span id="close" class="close">&times;</span>
+
+  <div *ngIf="typepopup=='Button'" class="popup-header">
+    Button
+  </div>
+
+  <div *ngIf="typepopup=='Text'" class="popup-header">
+    Text
+  </div>
+  <div *ngIf="typepopup=='Input'" class="popup-header">
+    Input
+  </div>
+    <div class="popup-content">
+      <label for="input">Click Here To Edit</label>
+      <input *ngIf="typepopup=='Input'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="textinput ">
+      <input *ngIf="typepopup=='Text'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]=" textlabel">
+      <input *ngIf="typepopup=='Button'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="textButton">
+      <button *ngIf="typepopup=='Button'" class="popup-button">Add Workflow</button>
+      
+    </div>
+ 
+
+
+</div>
+</div>
+
+
+
+
+ <div id="popupIcon" class="popup">
+  <div id="draggable1" class="draggablePop">
+    <span id="closeIcon" class="close">&times;</span>
+  
+   <div class="popup-header">
+    Button
+  </div>
+   
+    <div class=" popup-icon" >
+      <div id="iconList" class="icon-list">
+      </div>
+    </div>
+
+    <div class="pagination-buttons">
+      <div id="prevPageBtn" class="arrow-icon left-arrow"><i class="bi bi-chevron-double-left"></i></div>
+      <span id="nextPageBtn" class="arrow-icon right-arrow"><i class="bi bi-chevron-double-right"></i></span>
+    </div>
+   
+  </div>
+</div>
+
+
+
 
