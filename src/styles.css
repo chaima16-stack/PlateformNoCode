@@ -17,3 +17,21 @@
 .background{
     background-color: #D0D7E7;
 }
+/* styles.css */
+.grayed-background {
+    background-color: rgba(119, 119, 119, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn-disable
+        {
+        cursor: not-allowed;
+        pointer-events: none;
+        color: #000000;
+        }
+       
