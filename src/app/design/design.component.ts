@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { DesignServiceService } from '../services/design-service/design-service.service';
 
 
 @Component({
@@ -9,32 +10,16 @@ import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
   
 })
 export class DesignComponent {
-  iddropped:any
-  draggedItem: any = null;
-  draggedbutton=false; //test pour afficher le div sous forme d'un bouton
+  draggedItem: any = null;//prendre l'element dragged
+  draggedbutton=false; //test pour afficher le div sous forme d'un bouton le cas ou l'element est dropped
   draggedInput = false;
   draggedText=false;
   draggedIcon=false;
   draggedImage=false;
   draggedlist=false;
   subitem:any;
-  buttons: any[] = []; // pour ajouter les styles des boutons qui contiennent les positions 
-  inputs: any[]=[];
-  texts: any[]=[];
-  icons: any[]=[];
-  images: any[]=[];
-  lists: any[]=[];
-  listItem:any[]=[]; // listes contient les elément dropped pour afficher la liste des élements du screen
   testdropped=false // pour tester s'il s'agit des élement dropped
-  listeIcon:any[]=[]
-  listeinput:any[]=[]
-  listeimages:any[]=[]
-  listetext:any[]=[]
-  listebuttons:any[]=[]
-  listelists:any[]=[]
-  textButton="Button"
-  textlabel="Text"
-  textinput=""
+
   items = [
     { name: 'Elements Tree',subItems: [], showSubItems: false },
     { name: 'Elements', subItems: ['Text', 'Button', 'Icon','Image','Data List'] ,showSubItems: false},
@@ -46,6 +31,8 @@ export class DesignComponent {
    
 
   ];
+  constructor(public designService:DesignServiceService){}
+
   toggleSubItems(item:any): void {
     item.showSubItems = !item.showSubItems;
    
@@ -69,21 +56,21 @@ export class DesignComponent {
         const rect = page.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
-        const iconInfo = { 'style': {position: 'absolute',
+        const Info = { 'style': {position: 'absolute',
         left: x + 'px',
         top: y + 'px',},
-         'id':'droppedIcon'+this.getUniqueRandomId('droppedIcon',this.icons),
+         'id':'',
          'InnerHtml':'person','type': '' };
       
         switch(this.subitem){
-          case 'Button': this.draggedbutton=true;iconInfo.type = 'Button';
-          this.buttons.push(iconInfo);break;
-          case 'Input': this.draggedInput=true;iconInfo.type = 'Input';
-          this.inputs.push(iconInfo);break;
-          case'Text': this.draggedText=true;iconInfo.type = 'Text';this.texts.push(iconInfo);break;
-          case'Icon': this.draggedIcon=true;iconInfo.type = 'Icon';this.icons.push(iconInfo);break;
-          case'Image': this.draggedImage=true;iconInfo.type = 'Image';this.images.push(iconInfo);break;
-          case'Data List': this.draggedlist=true;iconInfo.type = 'Data List';this.lists.push(iconInfo);break;
+          case 'Button': this.draggedbutton=true;Info.type = 'Button';Info.id='droppedButton'+this.designService.getUniqueRandomId('droppedButton',this.designService.buttons)
+          this.designService.buttons.push(Info);break;
+          case 'Input': this.draggedInput=true;Info.type = 'Input';Info.id='droppedInput'+this.designService.getUniqueRandomId('droppedInput',this.designService.inputs)
+          this.designService.inputs.push(Info);break;
+          case'Text': this.draggedText=true;Info.type = 'Text';Info.id='droppedText'+this.designService.getUniqueRandomId('droppedText',this.designService.texts);this.designService.texts.push(Info);break;
+          case'Icon': this.draggedIcon=true;Info.type = 'Icon';Info.id='droppedIcon'+this.designService.getUniqueRandomId('droppedIcon',this.designService.icons);this.designService.icons.push(Info);break;
+          case'Image': this.draggedImage=true;Info.type = 'Image';Info.id='droppedImage'+this.designService.getUniqueRandomId('droppedImage',this.designService.images);this.designService.images.push(Info);break;
+          case'Data List': this.draggedlist=true;Info.type = 'Data List';Info.id='droppedlist'+this.designService.getUniqueRandomId('droppedlist',this.designService.lists);this.designService.lists.push(Info);break;
         }
        if(this.testdropped){
         this.draggedItem.remove();
@@ -102,110 +89,66 @@ UpdateList(event:any,type:any){
     let listtextes = document.getElementsByClassName("texte");
     let listinputs = document.getElementsByClassName("input-like");
     let listicons = document.getElementsByClassName("icon-like");
-    this.listItem=[]
+    this.designService.listItem=[]
     if(event!=true){
     switch(type){
       case 'Button':
         
           if(this.testdropped){
             const button= (event.target as HTMLElement)
-            for(let i=0;i<this.buttons.length;i++){
-              if(this.buttons[i].id==button.id){
-                this.buttons.splice(i,1);
-                break;
-              }
-            }
-            this.buttons[this.buttons.length-1].id=button.id
-            for(let j=0;j<this.listebuttons.length;j++){
-                   if(this.listebuttons[j].id==button.id){
-                    this.buttons[this.buttons.length-1].InnerHtml=this.listebuttons[j].InnerHtml;
-                    break;
-                   }
-            }
-           
+            this.designService.delete(button,this.designService.buttons)
+            this.designService.buttons[this.designService.buttons.length-1].id=button.id
+            this.designService.ModifiyInnerHtml(button,this.designService.listebuttons,this.designService.buttons);
             this.testdropped=false
 
           }
           const buttondrop= listbuttons[listbuttons.length-1] as HTMLElement ;
           if(!document.getElementById(buttondrop.id)){
-            buttondrop.setAttribute('id',this.buttons[this.buttons.length-1].id);
+            buttondrop.setAttribute('id',this.designService.buttons[this.designService.buttons.length-1].id);
              }
           
           break;
       case 'Input':
         if(this.testdropped){
           const input= (event.target as HTMLElement)
-          for(let i=0;i<this.inputs.length;i++){
-            if(this.inputs[i].id== input.id){
-              this.inputs.splice(i,1);
-              break;
-            }
-          }
-          this.inputs[this.inputs.length-1].id=input.id
-          for(let j=0;j<this.listeinput.length;j++){
-                 if(this.listeinput[j].id==input.id){
-                  this.inputs[this.inputs.length-1].InnerHtml=this.listeinput[j].InnerHtml;
-                  break;
-                 }
-          }
-         
+          this.designService.delete(input,this.designService.inputs)
+          this.designService.inputs[this.designService.inputs.length-1].id=input.id
+          this.designService.ModifiyInnerHtml(input,this.designService.listeinput,this.designService.inputs);
           this.testdropped=false
 
         }
         const inputdrop= listinputs[listinputs.length-1] as HTMLElement ;
         if(!document.getElementById(inputdrop.id)){
-          inputdrop.setAttribute('id',this.inputs[this.inputs.length-1].id);
+          inputdrop.setAttribute('id',this.designService.inputs[this.designService.inputs.length-1].id);
            };break;
 
       case'Text': 
        if(this.testdropped){
           const text= (event.target as HTMLElement)
-          for(let i=0;i<this.texts.length;i++){
-            if(this.texts[i].id== text.id){
-              this.texts.splice(i,1);
-              break;
-            }
-          }
-          this.texts[this.texts.length-1].id=text.id
-          for(let j=0;j<this.listetext.length;j++){
-                 if(this.listetext[j].id==text.id){
-                  this.texts[this.texts.length-1].InnerHtml=this.listetext[j].InnerHtml;
-                  break;
-                 }
-          }
-         
+          this.designService.delete(text,this.designService.texts)
+          this.designService.texts[this.designService.texts.length-1].id=text.id
+          this.designService.ModifiyInnerHtml(text,this.designService.listetext,this.designService.texts);
           this.testdropped=false
 
         }
         const textdrop= listtextes[listtextes.length-1] as HTMLElement ;
         if(!document.getElementById(textdrop.id)){
-          textdrop.setAttribute('id',this.texts[this.texts.length-1].id);
+          textdrop.setAttribute('id',this.designService.texts[this.designService.texts.length-1].id);
            };break;
 
       case'Icon': 
       
         if(this.testdropped){
           const icon= (event.target as HTMLElement)
-          for(let i=0;i<this.icons.length;i++){
-            if(this.icons[i].id==icon.id){
-              this.icons.splice(i,1);
-              break;
-            }
-          }
-          this.icons[this.icons.length-1].id=icon.id
-          for(let j=0;j<this.listeIcon.length;j++){
-                 if(this.listeIcon[j].id==icon.id){
-                  this.icons[this.icons.length-1].InnerHtml=this.listeIcon[j].InnerHtml;
-                  break;
-                 }
-          }
-         
+          this.designService.delete(icon,this.designService.icons)
+          this.designService.icons[this.designService.icons.length-1].id=icon.id
+          this.designService.ModifiyInnerHtml(icon,this.designService.listeIcon,this.designService.icons);
           this.testdropped=false
 
         }
         let icondrop= listicons[listicons.length-1] as HTMLElement ;
         if(!document.getElementById(icondrop.id)){
-          icondrop.setAttribute('id',this.icons[this.icons.length-1].id);
+          icondrop.setAttribute('id',this.designService.icons[this.designService.icons.length-1].id);
            }
       
       
@@ -222,81 +165,31 @@ UpdateList(event:any,type:any){
         }break;
     }
   }
-  for (let i = 0; i < listicons.length; i++) {
-    const icondrop = listicons[i] as HTMLElement;
-
-    this.listItem.push({
-      'type': 'Icon',
-      'id': icondrop.id
-    })
-
-  }
-  for (let i = 0; i < listbuttons.length; i++) {
-    const buttondrop = listbuttons[i] as HTMLElement;
-
-    this.listItem.push({
-      'type': 'Button',
-      'id': buttondrop.id
-    })
-
-  }
-  for (let i = 0; i < listinputs.length; i++) {
-    const inputdrop = listinputs[i] as HTMLElement;
-
-    this.listItem.push({
-      'type': 'Input',
-      'id': inputdrop.id
-    })
-
-  }
-  for (let i = 0; i < listtextes.length; i++) {
-    const textdrop = listtextes[i] as HTMLElement;
-
-    this.listItem.push({
-      'type': 'Text',
-      'id': textdrop.id
-    })
-
-  }
-
+ 
+  this.designService.AddElementToListItem('Icon',listicons)
+  this.designService.AddElementToListItem('Button',listbuttons)
+  this.designService.AddElementToListItem('Input',listinputs)
+  this.designService.AddElementToListItem('Text',listtextes)
   }
 
 
 delete(subItem:any){
+
     if(subItem.type=='Button'){
       let buttondelete = document.getElementById(subItem.id);
       if(buttondelete){
       buttondelete.remove();
-      for(let i=0;i<this.buttons.length;i++){
-        if(this.buttons[i].id==subItem.id){
-          this.buttons.splice(i,1)
-          break;
-        }
-      }
-      for(let i=0;i<this.listebuttons.length;i++){
-        if(this.listebuttons[i].id==subItem.id){
-          this.listebuttons.splice(i,1)
-          break;
-        }
-      }
+      this.designService.delete(subItem,this.designService.buttons)
+      this.designService.delete(subItem,this.designService.listebuttons)
     }
     }
     else if (subItem.type=='Text'){
       let textdelete = document.getElementById(subItem.id);
       if (textdelete){
       textdelete.remove();
-      for(let i=0;i<this.texts.length;i++){
-        if(this.texts[i].id==subItem.id){
-          this.texts.splice(i,1)
-          break;
-        }
-      }
-      for(let i=0;i<this.listetext.length;i++){
-        if(this.listetext[i].id==subItem.id){
-          this.listetext.splice(i,1)
-          break;
-        }
-      }
+      this.designService.delete(subItem,this.designService.texts)
+      this.designService.delete(subItem,this.designService.listetext)
+
     }
     }
     else if (subItem.type=='Input'){
@@ -304,73 +197,33 @@ delete(subItem:any){
       console.log(inputdelete)
       if (inputdelete){
       inputdelete.remove();
-      for(let i=0;i<this.inputs.length;i++){
-        if(this.inputs[i].id==subItem.id){
-          this.inputs.splice(i,1)
-          break;
-        }
-      }
-      for(let i=0;i<this.listeinput.length;i++){
-        if(this.listeinput[i].id==subItem.id){
-          this.listeinput.splice(i,1)
-          break;
-        }
-      }
+      this.designService.delete(subItem,this.designService.inputs)
+      this.designService.delete(subItem,this.designService.listeinput)
     }
     }
     else if (subItem.type=='Data List'){
       let listdelete = document.getElementById(subItem.id);
       if (listdelete){
       listdelete.remove();
-      for(let i=0;i<this.lists.length;i++){
-        if(this.lists[i].id==subItem.id){
-          this.lists.splice(i,1)
-          break;
-        }
-      }
-      for(let i=0;i<this.listelists.length;i++){
-        if(this.listelists[i].id==subItem.id){
-          this.listelists.splice(i,1)
-          break;
-        }
-      }
+      this.designService.delete(subItem,this.designService.lists)
+      this.designService.delete(subItem,this.designService.listelists)
     }
     }
     else if (subItem.type=='Icon'){
       let icondelete = document.getElementById(subItem.id);
       if (icondelete){
         icondelete.remove();
-        for(let i=0;i<this.icons.length;i++){
-          if(this.icons[i].id==subItem.id){
-            this.icons.splice(i,1)
-            break;
-          }
-        }
-        for(let i=0;i<this.listeIcon.length;i++){
-          if(this.listeIcon[i].id==subItem.id){
-            this.listeIcon.splice(i,1)
-            break;
-          }
-        }
+        this.designService.delete(subItem,this.designService.icons)
+        this.designService.delete(subItem,this.designService.listeIcon)
+
       }
-      console.log(this.listeIcon)
     }
     else if (subItem.type=='Image'){
       let imagedelete = document.getElementById(subItem.id);
       if (imagedelete){
       imagedelete.remove();
-      for(let i=0;i<this.images.length;i++){
-        if(this.images[i].id==subItem.id){
-          this.images.splice(i,1)
-          break;
-        }
-      }
-      for(let i=0;i<this.listeimages.length;i++){
-        if(this.listeimages[i].id==subItem.id){
-          this.listeimages.splice(i,1)
-          break;
-        }
-      }
+      this.designService.delete(subItem,this.designService.images)
+      this.designService.delete(subItem,this.designService.listeimages)
     }
     }
      this.UpdateList(true,true);
@@ -512,15 +365,15 @@ showIcon(event: any) {
                   iconOption.addEventListener('click',()=>{
                              icon!.innerHTML=`<i class="bi bi-${iconNameTrimmed}"></i>`;
                              let test=false
-                             for(let k=0;k<this.listeIcon.length;k++){
-                              if(this.listeIcon[k].id==id){
-                                this.listeIcon[k].InnerHtml=iconNameTrimmed;
+                             for(let k=0;k<this.designService.listeIcon.length;k++){
+                              if(this.designService.listeIcon[k].id==id){
+                                this.designService.listeIcon[k].InnerHtml=iconNameTrimmed;
                                 test=true
                                 break;
                               }
                              }
                              if(!test){
-                              this.listeIcon.push({'id':id,'InnerHtml':iconNameTrimmed})
+                              this.designService.listeIcon.push({'id':id,'InnerHtml':iconNameTrimmed})
                              }
                             })
               }
@@ -530,28 +383,7 @@ showIcon(event: any) {
       }
     }
 
-ModifiyLabel(){
-  let input= document.getElementById('input');
 
-}
-  generateRandomId(){
-      return Math.floor(Math.random() * 1000); 
-  }
   
-  isIdUnique(id: any, tab:any): boolean {
-      // Vérifier si l'identifiant est unique dans le tableau
-      return !tab.includes(id);
-  }
-  
- getUniqueRandomId(typeId:any,tab: any) {
-      let randomId: number;
-  
-      // Générer un identifiant aléatoire jusqu'à ce qu'il soit unique
-      do {
-          randomId = this.generateRandomId();
-      } while (!this.isIdUnique(typeId+randomId, tab));
-
-      return randomId;
-  }
 
 }

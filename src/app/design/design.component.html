@@ -31,7 +31,7 @@
                 </div>
                 </div>
                 <ul *ngIf="itemTaken.showSubItems">
-                  <li *ngFor="let subItem of listItem" class="subElement">
+                  <li *ngFor="let subItem of designService.listItem" class="subElement">
                     <div class="row">
                       <div class="col-md-10 col-10 col-sm-10 marge">
                     <i class="icon-style " [ngClass]="{
@@ -104,12 +104,12 @@
     <main class="col-md-10 col-8 col-sm-9 ms-sm-auto col-lg-9 px-md-4">
       <div id="page" class="rectangle" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
 
-        <div *ngFor="let button of buttons" [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" (dragend)="UpdateList($event,'Button')" [draggable]="true" (click)="showPopUp($event,'popup','close','Button')">{{textButton}}</div>
-         <div *ngFor="let text of texts" [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true" (dragend)="UpdateList($event,'Text')" (click)="showPopUp($event,'popup','close','Text')">{{textlabel}}</div>
-         <div *ngFor="let input of inputs" [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true" (dragend)="UpdateList($event,'Input')" (click)="showPopUp($event,'popup','close','Input')">{{textinput}}</div>
-         <div *ngFor="let icon of icons" [ngClass]="{'icon-like':draggedIcon}"   [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true" (click)="showIcon($event)" (dragend)="UpdateList($event,icon.type)"><i class="bi bi-{{icon.InnerHtml}}"></i></div>
-         <div *ngFor="let image of images" [ngClass]="{'image-like':draggedImage}"   [ngStyle]="image.style" (dragstart)="ModifyDrag($event,'Image')" [draggable]="true">Text</div>
-         <div *ngFor="let list of lists" [ngClass]="{'list-like':draggedlist}"   [ngStyle]="list.style" (dragstart)="ModifyDrag($event,'Data List')" [draggable]="true">Text</div>
+        <div *ngFor="let button of designService.buttons" [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" (dragend)="UpdateList($event,'Button')" [draggable]="true" (click)="showPopUp($event,'popup','close','Button')">{{designService.textButton}}</div>
+         <div *ngFor="let text of designService.texts" [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true" (dragend)="UpdateList($event,'Text')" (click)="showPopUp($event,'popup','close','Text')">{{designService.textlabel}}</div>
+         <div *ngFor="let input of designService.inputs" [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true" (dragend)="UpdateList($event,'Input')" (click)="showPopUp($event,'popup','close','Input')">{{designService.textinput}}</div>
+         <div *ngFor="let icon of designService.icons" [ngClass]="{'icon-like':draggedIcon}"   [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true" (click)="showIcon($event)" (dragend)="UpdateList($event,icon.type)"><i class="bi bi-{{icon.InnerHtml}}"></i></div>
+         <div *ngFor="let image of designService.images" [ngClass]="{'image-like':draggedImage}"   [ngStyle]="image.style" (dragstart)="ModifyDrag($event,'Image')" [draggable]="true">Text</div>
+         <div *ngFor="let list of designService.lists" [ngClass]="{'list-like':draggedlist}"   [ngStyle]="list.style" (dragstart)="ModifyDrag($event,'Data List')" [draggable]="true">Text</div>
         </div>
     </main>
   </div>
@@ -130,9 +130,9 @@
   </div>
     <div class="popup-content">
       <label for="input">Click Here To Edit</label>
-      <input *ngIf="typepopup=='Input'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="textinput ">
-      <input *ngIf="typepopup=='Text'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]=" textlabel">
-      <input *ngIf="typepopup=='Button'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="textButton">
+      <input *ngIf="typepopup=='Input'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="designService.textinput ">
+      <input *ngIf="typepopup=='Text'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="designService.textlabel">
+      <input *ngIf="typepopup=='Button'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="designService.textButton">
       <button *ngIf="typepopup=='Button'" class="popup-button">Add Workflow</button>
       
     </div>
