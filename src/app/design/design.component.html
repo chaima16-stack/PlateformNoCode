@@ -1,3 +1,4 @@
+<app-header></app-header>
 <div class="container-fluid">
   <div class="row">
     <nav class=" d-md-block  sidebar col-3 col-sm-3 col-4 col-md-2 col-lg-3">
@@ -18,30 +19,47 @@
 
             </div>
             
+              <!--screen-->
 
             <ul *ngIf="items[0].showSubItems">
-              <li *ngFor="let itemTaken of itemsTaken">
+             
+               <li *ngFor="let appitem of app">
+
+           
+          
+                  <div class="row">
+                  <div class="col-md-1 espace"></div>
+                  <div (click)="toggleSubItems(appitem)" class=" col-md-11 itemTaken" [class.active]="appitem.showSubItems">
+                  <i
+                    [ngClass]="{'bi bi-chevron-right': !appitem.showSubItems, 'bi bi-chevron-down': appitem.showSubItems}"></i>
+                  <i class="icon-itemTaken bi bi-window-fullscreen"></i>
+                  {{ appitem.name_app }} <i class="bi bi-plus plus-icon" routerLink="/Application" ></i>
+                  </div>
+                </div>
+          
+         <ul *ngIf="appitem.showSubItems">
+             <li  *ngFor="let itemTaken of itemsTaken">
                 <div class="row">
                   <div class="col-md-1 espace"></div>
-                <div (click)="toggleSubItems(itemTaken)" class=" col-md-11 itemTaken" [class.active]="itemTaken.showSubItems">
+                  <div (click)="toggleSubItems(itemTaken)" class=" col-md-11 itemTaken" [class.active]="itemTaken.showSubItems">
                   <i
                     [ngClass]="{'bi bi-chevron-right': !itemTaken.showSubItems, 'bi bi-chevron-down': itemTaken.showSubItems}"></i>
                   <i class="icon-itemTaken bi bi-window-fullscreen"></i>
-                  {{ itemTaken.name }} <i class="bi bi-plus plus-icon" ></i>
+                  {{ itemTaken.name_screen }} <i class="bi bi-plus plus-icon" routerLink="/Screen/{{this.appService.idApp}}/1" ></i>
+                  </div>
                 </div>
-                </div>
-                <ul *ngIf="itemTaken.showSubItems">
+                  <ul *ngIf="itemTaken.showSubItems">
                   <li *ngFor="let subItem of designService.listItem" class="subElement">
                     <div class="row">
                       <div class="col-md-10 col-10 col-sm-10 marge">
-                    <i class="icon-style " [ngClass]="{
-    'bi bi-fonts': subItem.type=='Text',
-    'bi bi-input-cursor-text': subItem.type=='Input',
-    'bi bi-hand-index-thumb-fill': subItem.type=='Button',
-    'bi bi-person-circle': subItem.type=='Icon',
-    'bi bi-text-indent-left': subItem.type=='Data List',
-    'bi bi-image': subItem.type=='Image' 
-  }"></i>
+                      <i class="icon-style " [ngClass]="{
+                         'bi bi-fonts': subItem.type=='Text',
+                          'bi bi-input-cursor-text': subItem.type=='Input',
+                          'bi bi-hand-index-thumb-fill': subItem.type=='Button',
+                           'bi bi-person-circle': subItem.type=='Icon',
+                           'bi bi-text-indent-left': subItem.type=='Data List',
+                               'bi bi-image': subItem.type=='Image' 
+                            }"></i>
                     {{ subItem.type }}
                     </div>
                     <div class="col-md-2 col-2 col-sm-2">
@@ -50,15 +68,21 @@
                     </div>
                     </div>
                   </li>
-                </ul>
-                <div class="row">
-                <div *ngIf="itemTaken.showSubItems" class="divider"></div>
-</div>
+                   </ul>
+                  <div class="row">
+                   <div *ngIf="itemTaken.showSubItems" class="divider"></div>
+                  </div>
               </li>
             </ul>
-
-
-          </li>
+             </li>
+            
+          
+            
+          
+          
+            </ul>
+        </li>
+          <!--items pour le drop-->
           <li *ngFor="let item of items;">
 
             <div *ngIf="item.name!='Elements Tree'">
@@ -95,7 +119,7 @@
               </ul>
             </div>
           </li>
-        </ul>
+      </ul>
 
 
 

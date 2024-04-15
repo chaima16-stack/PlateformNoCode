@@ -1,0 +1,33 @@
+ <app-header></app-header>
+
+ <div id="popupContainer">
+        <div lass="container mt-5 overlay" id="popupForm">
+            <span class="closeBtn" onclick="closePopup()">&times;</span>
+            <div class="row d-flex justify-content-center ">
+              <div class="col-md-8">
+          <form id="regForm" (ngSubmit)="submitForm()" #appForm="ngForm">
+              <h1>Create an application</h1>
+                  <br>
+        
+              <div id="tab" class="tab">
+                  <h6>Name of application</h6>
+                  <p><input placeholder="Name..."  [(ngModel)]="appName" name="appName" required></p>
+              </div>
+              <div  class="tab">
+                <h6>Description of Application</h6>
+                <p><input placeholder="Description..." [(ngModel)]="description" name="description" required></p>
+            </div>
+              <div class="tab">
+                  <h6>Number of screen</h6>
+                  <p><input placeholder="Number" type="number" [(ngModel)]="numberOfScreens" name="numberOfScreens" required></p>
+              </div>
+            <button (click)="this.appService.validateForm()"  type="submit" class="btn btn-primary">Create</button>
+
+            
+            
+          </form>
+      </div>
+  </div>
+
+        </div>
+    </div>

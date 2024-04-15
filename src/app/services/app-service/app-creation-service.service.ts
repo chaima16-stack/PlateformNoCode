@@ -1,15 +1,73 @@
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppCreationServiceService {
   isCreatingApp: boolean = false;
-
-  constructor() { }
+  idApp = 0;
+  constructor(private http: HttpClient) { }
   startCreatingApp() {
     this.isCreatingApp = true;
   }
+  private apiUrl = 'http://127.0.0.1:8000/';
+  addApp(name: string, description: string, date_creation: Date): Observable<any> {
+    const body = {
+      name: name,
+      description: description,
+      user:2,
+      date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
+      date_update: date_creation.toISOString().slice(0, 10)
+    };
+    
+    return this.http.post(this.apiUrl+'apps/', body)
+      .pipe(
+        catchError(this.handleError) // Utilisation de catchError avec la fonction de gestion d'erreur
+      );
+  }
 
+  private handleError(error: HttpErrorResponse): Observable<any> {
+    console.error('An error occurred:', error);
+    return throwError(error);  // Utilisation de throwError pour retourner un observable d'erreur
+  }
+  
+  addScreen(name: string, screenType: string,id_app:number, date_creation: Date): Observable<any> {
+    const body = {
+      name_screen: name,
+      type_screen: screenType,
+      app : id_app,
+      date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
+      date_update: date_creation.toISOString().slice(0, 10)
+    };
+    
+    return this.http.post(this.apiUrl+'screens/', body)
+      .pipe(
+        catchError(this.handleError) 
+      );
+  }
+
+  validateForm() {
+    const x = document.getElementsByClassName('tab') as HTMLCollectionOf<HTMLElement>;
+   
+    for (let i = 0; i < x.length; i++) {
+      const inputs = x[i].getElementsByTagName('input');
+      for(let j=0;j<inputs.length;j++){
+        if ((inputs[j] as HTMLInputElement).value === '') {
+          (inputs[j] as HTMLElement).classList.add('input-invalid');
+          break;
+      }
+      }
+    }
+}
+getScreensByApp(appId: number){
+  const params = new HttpParams().set('app', appId.toString());
+  return this.http.get(this.apiUrl+'/appScreens', { params });
+}
+getAppByUser(userId: number){
+  const params = new HttpParams().set('user',userId.toString());
+  return this.http.get(this.apiUrl+'/appbyUser', { params });
+}
 
 }

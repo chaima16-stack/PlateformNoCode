@@ -1,7 +1,8 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { DesignServiceService } from '../services/design-service/design-service.service';
-
-
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { AppCreationServiceService } from '../services/app-service/app-creation-service.service';
 @Component({
   selector: 'app-design',
   templateUrl: './design.component.html',
@@ -26,13 +27,60 @@ export class DesignComponent {
     { name: 'Input Forms', subItems: ['Input'] ,showSubItems: false},
 
   ];
-  itemsTaken = [
-    { name: 'Screen 1', subItems: ['Text', 'Button', 'Icon','Image','Data List'],showSubItems: false },
+  appName: string = '';
+  numberOfScreens: number=0;
+  description: string ='';
+  app:any // apps by user connected
+  itemsTaken :any; //screens by app
+  constructor(public appService: AppCreationServiceService,public designService:DesignServiceService,private route: ActivatedRoute,private router: Router){}
+  ngOnInit(): void {
    
+    this.route.params.subscribe(params => {
+      this.appService.idApp= params['id_app'];
+      this.appService.getScreensByApp(this.appService.idApp)
+      .subscribe((response) => {
+      
+          // Si la réponse est un objet, le convertir en tableau
+    const screensArray = Array.isArray(response) ? response : [response];
+          this.itemsTaken = screensArray.map(screen => ({
+            app: screen.app,
+            date_creation: screen.date_creation,
+            date_update: screen.date_update,
+            id_screen: screen.id_screen,
+            name_screen: screen.name_screen,
+            type_screen: screen.type_screen,
+            showSubItems: false
+          }));
+         
+        }, ); 
+      
+    });
+    //liste des apps d'user connecté 
+    this.appService.getAppByUser(2).subscribe((response)=>{
+      console.log(response)
+      const appsArray = Array.isArray(response) ? response : [response];
+      this.app=appsArray.map(app=>({
+        date_creation: app.date_creation,
+        date_update: app.date_update,
+        description: app.description,
+        id_app: app.id_app,
+        name_app: app.name,
+        user: app.user,
+        showSubItems: false
+      }))
+    })
+  }
+ addApp() {
+   
+   
+    this.appService.addApp(this.appName,this.description,new Date())
+    .subscribe((response) => {
+        console.log( response);
+        this.router.navigate(['/Screen/'+response.id_app+'/'+this.numberOfScreens]);
+      }, );
 
-  ];
-  constructor(public designService:DesignServiceService){}
-
+      
+  }
   toggleSubItems(item:any): void {
     item.showSubItems = !item.showSubItems;
    
@@ -383,7 +431,13 @@ showIcon(event: any) {
       }
     }
 
-
+getScreen(){
+  this.appService.getScreensByApp(this.appService.idApp)
+  .subscribe((response) => {
+      console.log( response);
+      
+    }, ); 
+}
   
 
 }
