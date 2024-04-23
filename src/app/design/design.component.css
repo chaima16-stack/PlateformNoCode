@@ -53,11 +53,11 @@
     font-size: 16px;
     padding-left: 20px;
 }
-.plus-icon{
+.icons-style{
   float: right;
   color: red; 
   cursor: pointer;
-  font-size: 20px;
+  font-size: 15px;
 }
 .itemTaken.active {
     position: relative; 

@@ -69,5 +69,48 @@ getAppByUser(userId: number){
   const params = new HttpParams().set('user',userId.toString());
   return this.http.get(this.apiUrl+'/appbyUser', { params });
 }
+getScreen(){
+  return this.http.get(this.apiUrl+'/screens');
+}
 
+AddElementByScreen(screenid: number,elementid:string, Type_element: string, label :string, position: string, date_creation:Date){
+  const body = {
+    screen: screenid,
+    id_element:elementid,
+    type_element:Type_element,
+    label:label,
+    position:position,
+    date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
+    date_update: date_creation.toISOString().slice(0, 10)
+  };
+  return this.http.post(this.apiUrl+'elements/', body)
+  .pipe(
+    catchError(this.handleError) // Utilisation de catchError avec la fonction de gestion d'erreur
+  );
+}
+ModifiyLabel(label:string, id:string){
+
+  return this.http.patch(this.apiUrl+ 'elements/'+id +'/', {"label":label }) .pipe(
+    catchError(this.handleError) 
+  );
+}
+getElmentByScreen(idscreen:number){
+  const params = new HttpParams().set('screen', idscreen.toString());
+  return this.http.get(this.apiUrl+'/elementByScreens', { params });
+}
+deleteElement(id:string){
+   return this.http.delete(this.apiUrl+'elements/'+id)
+}
+ModifiyPosition(position:string,id:string){
+
+  return this.http.patch(this.apiUrl+ 'elements/'+id +'/', {"position":position }) .pipe(
+    catchError(this.handleError) 
+  );
+}
+deleteScreen(id:any){
+  return this.http.delete(this.apiUrl+'screens/'+id)
+}
+deleteApp(id:any){
+  return this.http.delete(this.apiUrl+'apps/'+id)
+}
 }

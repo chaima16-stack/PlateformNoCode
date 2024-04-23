@@ -29,25 +29,28 @@
           
                   <div class="row">
                   <div class="col-md-1 espace"></div>
-                  <div (click)="toggleSubItems(appitem)" class=" col-md-11 itemTaken" [class.active]="appitem.showSubItems">
+                  <div (click)="getScreenByApp(appitem)" class=" col-md-11 itemTaken" [class.active]="appitem.showSubItems">
                   <i
                     [ngClass]="{'bi bi-chevron-right': !appitem.showSubItems, 'bi bi-chevron-down': appitem.showSubItems}"></i>
                   <i class="icon-itemTaken bi bi-window-fullscreen"></i>
-                  {{ appitem.name_app }} <i class="bi bi-plus plus-icon" routerLink="/Application" ></i>
+                  {{ appitem.name_app }} <i class="bi bi-plus icons-style" routerLink="/Application" ></i>
                   </div>
                 </div>
           
          <ul *ngIf="appitem.showSubItems">
              <li  *ngFor="let itemTaken of itemsTaken">
+             <div  >
                 <div class="row">
                   <div class="col-md-1 espace"></div>
-                  <div (click)="toggleSubItems(itemTaken)" class=" col-md-11 itemTaken" [class.active]="itemTaken.showSubItems">
+                  <div (click)="getElement(itemTaken)" class=" col-md-11 itemTaken" [class.active]="itemTaken.showSubItems">
                   <i
                     [ngClass]="{'bi bi-chevron-right': !itemTaken.showSubItems, 'bi bi-chevron-down': itemTaken.showSubItems}"></i>
                   <i class="icon-itemTaken bi bi-window-fullscreen"></i>
-                  {{ itemTaken.name_screen }} <i class="bi bi-plus plus-icon" routerLink="/Screen/{{this.appService.idApp}}/1" ></i>
+                  {{ itemTaken.name_screen }} <i class="bi bi-plus icons-style" routerLink="/Screen/{{itemTaken.app}}/1"  ></i>
                   </div>
                 </div>
+
+                <!--dragged-->
                   <ul *ngIf="itemTaken.showSubItems">
                   <li *ngFor="let subItem of designService.listItem" class="subElement">
                     <div class="row">
@@ -72,6 +75,7 @@
                   <div class="row">
                    <div *ngIf="itemTaken.showSubItems" class="divider"></div>
                   </div>
+                  </div>
               </li>
             </ul>
              </li>
@@ -82,7 +86,7 @@
           
             </ul>
         </li>
-          <!--items pour le drop-->
+          <!--static-->
           <li *ngFor="let item of items;">
 
             <div *ngIf="item.name!='Elements Tree'">
@@ -128,10 +132,10 @@
     <main class="col-md-10 col-8 col-sm-9 ms-sm-auto col-lg-9 px-md-4">
       <div id="page" class="rectangle" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
 
-        <div *ngFor="let button of designService.buttons" [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" (dragend)="UpdateList($event,'Button')" [draggable]="true" (click)="showPopUp($event,'popup','close','Button')">{{designService.textButton}}</div>
-         <div *ngFor="let text of designService.texts" [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true" (dragend)="UpdateList($event,'Text')" (click)="showPopUp($event,'popup','close','Text')">{{designService.textlabel}}</div>
-         <div *ngFor="let input of designService.inputs" [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true" (dragend)="UpdateList($event,'Input')" (click)="showPopUp($event,'popup','close','Input')">{{designService.textinput}}</div>
-         <div *ngFor="let icon of designService.icons" [ngClass]="{'icon-like':draggedIcon}"   [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true" (click)="showIcon($event)" (dragend)="UpdateList($event,icon.type)"><i class="bi bi-{{icon.InnerHtml}}"></i></div>
+        <div #buttonsdropped *ngFor="let button of designService.buttons" id={{button.id}} [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" (dragend)="UpdateList($event,'Button')" [draggable]="true" (click)="showPopUp($event,'popup','close','Button')">{{button.InnerHtml}}</div>
+         <div *ngFor="let text of designService.texts" id={{text.id}} [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true" (dragend)="UpdateList($event,'Text')" (click)="showPopUp($event,'popup','close','Text')">{{text.InnerHtml}}</div>
+         <div *ngFor="let input of designService.inputs" id={{input.id}} [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true" (dragend)="UpdateList($event,'Input')" (click)="showPopUp($event,'popup','close','Input')">{{input.InnerHtml}}</div>
+         <div *ngFor="let icon of designService.icons" [ngClass]="{'icon-like':draggedIcon}"   id={{icon.id}} [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true" (click)="showIcon($event)" (dragend)="UpdateList($event,icon.type)"><i class="bi bi-{{icon.InnerHtml}}"></i></div>
          <div *ngFor="let image of designService.images" [ngClass]="{'image-like':draggedImage}"   [ngStyle]="image.style" (dragstart)="ModifyDrag($event,'Image')" [draggable]="true">Text</div>
          <div *ngFor="let list of designService.lists" [ngClass]="{'list-like':draggedlist}"   [ngStyle]="list.style" (dragstart)="ModifyDrag($event,'Data List')" [draggable]="true">Text</div>
         </div>

@@ -24,19 +24,15 @@ export class ScreenComponent {
   }
 
   submitForm() {
-   
-    
     this.appService.addScreen(this.screenName,this.screenType,this.appService.idApp,new Date())
     .subscribe((response) => {
-        console.log( response);
         this.screenName = '';
         this.screenType = '';
         this.numberscreen--;
         if(this.numberscreen==0)
-          this.router.navigate(['/Design/'+this.appService.idApp]);
+          this.router.navigate(['/Design/']);
         else
           this.router.navigate(['/Screen/'+this.appService.idApp+'/'+this.numberscreen]);
       }, );  
   }
-
 }

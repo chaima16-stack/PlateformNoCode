@@ -5,7 +5,7 @@ import { ApplicationComponent } from './application/application.component';
 import { ScreenComponent } from './screen/screen.component';
 
 const routes: Routes = [
-  {path:'Design/:id_app', component:DesignComponent},
+  {path:'Design', component:DesignComponent},
   {path:'Application', component:ApplicationComponent},
   {path:'Screen/:id_app/:number_screen', component:ScreenComponent},
 

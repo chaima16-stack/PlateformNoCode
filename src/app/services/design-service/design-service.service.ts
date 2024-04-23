@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AppCreationServiceService } from '../app-service/app-creation-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class DesignServiceService {
   textButton="Button"
   textlabel="Text"
   textinput="Type a placeholder here ...."
-  constructor() { }
+  constructor(private appservice:AppCreationServiceService) { }
 
 delete(element:any,liste:any){
   for(let i=0;i<liste.length;i++){
@@ -38,7 +39,9 @@ ModifiyInnerHtml(element:any,liste:any,liste1:any){
     }
 }
 }
+
 AddElementToListItem(type:any,liste:any){
+  
   for (let i = 0; i < liste.length; i++) {
     const element = liste[i] as HTMLElement;
 
@@ -48,6 +51,13 @@ AddElementToListItem(type:any,liste:any){
     })
 
   }
+}
+getIndex(liste:any,id:any):any{
+  for (let i=0;i<liste.length;i++){
+    if( liste[i].id == id)
+        return i;
+    
+    }
 }
 generateRandomId(){
   return Math.floor(Math.random() * 1000); 
