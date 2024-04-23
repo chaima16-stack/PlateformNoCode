@@ -1,7 +1,9 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import {  Component, OnInit} from '@angular/core';
 import { DesignServiceService } from '../services/design-service/design-service.service';
-
-
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { AppCreationServiceService } from '../services/app-service/app-creation-service.service';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-design',
   templateUrl: './design.component.html',
@@ -9,7 +11,7 @@ import { DesignServiceService } from '../services/design-service/design-service.
 
   
 })
-export class DesignComponent {
+export class DesignComponent implements OnInit {
   draggedItem: any = null;//prendre l'element dragged
   draggedbutton=false; //test pour afficher le div sous forme d'un bouton le cas ou l'element est dropped
   draggedInput = false;
@@ -26,22 +28,128 @@ export class DesignComponent {
     { name: 'Input Forms', subItems: ['Input'] ,showSubItems: false},
 
   ];
-  itemsTaken = [
-    { name: 'Screen 1', subItems: ['Text', 'Button', 'Icon','Image','Data List'],showSubItems: false },
+  appName: string = '';
+  numberOfScreens: number=0;
+  description: string ='';
+  app:any // apps by user connected
+  itemsTaken :any //screens by app
+  idscreen:any
+  constructor(public appService: AppCreationServiceService,public designService:DesignServiceService,private route: ActivatedRoute,private router: Router){}
+ 
+  ngOnInit(): void {
+    //liste des apps d'user connecté 
+    this.refreshListApp();
+  }
+refreshListApp(){
+  this.appService.getAppByUser(2).subscribe((response)=>{
+    const appsArray = Array.isArray(response) ? response : [response];
+    this.app=appsArray.map(app=>({
+      date_creation: app.date_creation,
+      date_update: app.date_update,
+      description: app.description,
+      id_app: app.id_app,
+      name_app: app.name,
+      user: app.user,
+      showSubItems: false
+    }))
+  });
+}
+getScreenByApp(appitem:any){
+   this.appService.getScreensByApp(appitem.id_app).subscribe(response=>{
+    const screensArray = Array.isArray(response) ? response : [response];
+      this.itemsTaken = screensArray.map(screen => ({
+        app: screen.app,
+        date_creation: screen.date_creation,
+        date_update: screen.date_update,
+        id_screen: screen.id_screen,
+        name_screen: screen.name_screen,
+        type_screen: screen.type_screen,
+        showSubItems: false
+      }));})
+   this.toggleSubItems(appitem)
+   for(let i=0;i<this.app.length;i++){
+    if(this.app[i]!=appitem && this.app[i].showSubItems){
+      this.toggleSubItems(this.app[i])
+    }
+   }
+}
+getElement(item:any){
+    this.designService.buttons=[]
+    this.designService.inputs=[]
+    this.designService.texts=[]
+    this.designService.icons=[]
+    this.designService.listItem=[]
+    this.appService.getElmentByScreen(item.id_screen).subscribe((response) => {
+      const elementsArray = Array.isArray(response) ? response : [response];
+      for (let i = 0; i < elementsArray.length; i++) {
+        const obj = JSON.parse(elementsArray[i].position);
+        let element = {
+          style: obj,
+          id: elementsArray[i].id_element,
+          InnerHtml: elementsArray[i].label,
+          type: elementsArray[i].type_element
+        };
+        switch(element.type){
+          case 'Button': this.designService.buttons.push(element);break;
+          case 'Input': this.designService.inputs.push(element);break;
+          case 'Text':this.designService.texts.push(element);break;
+          case 'Icon': this.designService.icons.push(element);break;
+        }
+
+        this.designService.listItem.push({
+            'type':elementsArray[i].type_element,
+            'id':elementsArray[i].id_element
+        })
+      }
+      this.draggedbutton = true; 
+      this.draggedInput = true; 
+      this.draggedText = true;
+      this.draggedIcon = true;
+      this.draggedText =true;
+    });
+  
+  
+    this.toggleSubItems(item)
+    this.idscreen=item.id_screen
+   for(let i=0;i<this.itemsTaken.length;i++){
+    if(this.itemsTaken[i]!=item && this.itemsTaken[i].showSubItems){
+      this.toggleSubItems(this.itemsTaken[i])
+    }
+   }
+  
+  }
+deleteApp(id:any){
+  this.appService.deleteApp(id).subscribe()
+  this.refreshListApp();
+}
+deleteScreen(appitem:any){
+  this.appService.deleteScreen(appitem.id_app).subscribe()
+  this.getScreenByApp(appitem)
+}
+ 
+ 
+ addApp() {
    
+   
+    this.appService.addApp(this.appName,this.description,new Date())
+    .subscribe((response) => {
+        console.log( response);
+        this.router.navigate(['/Screen/'+response.id_app+'/'+this.numberOfScreens]);
+      }, );
 
-  ];
-  constructor(public designService:DesignServiceService){}
+      
+  }
 
-  toggleSubItems(item:any): void {
+toggleSubItems(item:any): void {
     item.showSubItems = !item.showSubItems;
-   
+    
   }
 
 
   onDragStart(event: DragEvent,subItem:any) {
     this.draggedItem = event.target;
      this.subitem=subItem;
+    
   }
 
   onDragOver(event: DragEvent) {
@@ -63,12 +171,21 @@ export class DesignComponent {
          'InnerHtml':'person','type': '' };
       
         switch(this.subitem){
-          case 'Button': this.draggedbutton=true;Info.type = 'Button';Info.id='droppedButton'+this.designService.getUniqueRandomId('droppedButton',this.designService.buttons)
-          this.designService.buttons.push(Info);break;
-          case 'Input': this.draggedInput=true;Info.type = 'Input';Info.id='droppedInput'+this.designService.getUniqueRandomId('droppedInput',this.designService.inputs)
-          this.designService.inputs.push(Info);break;
-          case'Text': this.draggedText=true;Info.type = 'Text';Info.id='droppedText'+this.designService.getUniqueRandomId('droppedText',this.designService.texts);this.designService.texts.push(Info);break;
-          case'Icon': this.draggedIcon=true;Info.type = 'Icon';Info.id='droppedIcon'+this.designService.getUniqueRandomId('droppedIcon',this.designService.icons);this.designService.icons.push(Info);break;
+          case 'Button': this.draggedbutton=true;Info.type = 'Button';Info.InnerHtml = 'Button';Info.id='droppedButton'+this.designService.getUniqueRandomId('droppedButton',this.designService.buttons)
+          this.designService.buttons.push(Info);
+          if(!this.testdropped)
+            this.appService.AddElementByScreen(this.idscreen,Info.id, 'Button','Button', JSON.stringify(Info.style), new Date()).subscribe();
+          break;
+          case 'Input': this.draggedInput=true;Info.type = 'Input';Info.InnerHtml='';Info.id='droppedInput'+this.designService.getUniqueRandomId('droppedInput',this.designService.inputs)
+          this.designService.inputs.push(Info);
+          if(!this.testdropped)
+            this.appService.AddElementByScreen(this.idscreen,Info.id, 'Input','Input', JSON.stringify(Info.style), new Date()).subscribe();break;
+          case'Text': this.draggedText=true;Info.type = 'Text';Info.InnerHtml = 'Text';Info.id='droppedText'+this.designService.getUniqueRandomId('droppedText',this.designService.texts);this.designService.texts.push(Info);
+          if(!this.testdropped)
+            this.appService.AddElementByScreen(this.idscreen,Info.id, 'Text','Text', JSON.stringify(Info.style), new Date()).subscribe();break;
+          case'Icon': this.draggedIcon=true;Info.type = 'Icon';Info.id='droppedIcon'+this.designService.getUniqueRandomId('droppedIcon',this.designService.icons);this.designService.icons.push(Info);
+          if(!this.testdropped)
+            this.appService.AddElementByScreen(this.idscreen,Info.id, 'Icon','person', JSON.stringify(Info.style), new Date()).subscribe();break;
           case'Image': this.draggedImage=true;Info.type = 'Image';Info.id='droppedImage'+this.designService.getUniqueRandomId('droppedImage',this.designService.images);this.designService.images.push(Info);break;
           case'Data List': this.draggedlist=true;Info.type = 'Data List';Info.id='droppedlist'+this.designService.getUniqueRandomId('droppedlist',this.designService.lists);this.designService.lists.push(Info);break;
         }
@@ -93,16 +210,16 @@ UpdateList(event:any,type:any){
     if(event!=true){
     switch(type){
       case 'Button':
-        
+          
           if(this.testdropped){
             const button= (event.target as HTMLElement)
             this.designService.delete(button,this.designService.buttons)
             this.designService.buttons[this.designService.buttons.length-1].id=button.id
-            this.designService.ModifiyInnerHtml(button,this.designService.listebuttons,this.designService.buttons);
+            this.designService.buttons[this.designService.buttons.length-1].InnerHtml=button.innerHTML
             this.testdropped=false
-
+            this.appService.ModifiyPosition(JSON.stringify(this.designService.buttons[this.designService.buttons.length-1].style),button.id).subscribe()
           }
-          const buttondrop= listbuttons[listbuttons.length-1] as HTMLElement ;
+          const buttondrop= listbuttons[listbuttons.length-1]  as HTMLElement;
           if(!document.getElementById(buttondrop.id)){
             buttondrop.setAttribute('id',this.designService.buttons[this.designService.buttons.length-1].id);
              }
@@ -113,9 +230,9 @@ UpdateList(event:any,type:any){
           const input= (event.target as HTMLElement)
           this.designService.delete(input,this.designService.inputs)
           this.designService.inputs[this.designService.inputs.length-1].id=input.id
-          this.designService.ModifiyInnerHtml(input,this.designService.listeinput,this.designService.inputs);
+          this.designService.inputs[this.designService.inputs.length-1].InnerHtml=input.innerHTML
           this.testdropped=false
-
+          this.appService.ModifiyPosition(JSON.stringify(this.designService.inputs[this.designService.inputs.length-1].style),input.id).subscribe()
         }
         const inputdrop= listinputs[listinputs.length-1] as HTMLElement ;
         if(!document.getElementById(inputdrop.id)){
@@ -127,9 +244,9 @@ UpdateList(event:any,type:any){
           const text= (event.target as HTMLElement)
           this.designService.delete(text,this.designService.texts)
           this.designService.texts[this.designService.texts.length-1].id=text.id
-          this.designService.ModifiyInnerHtml(text,this.designService.listetext,this.designService.texts);
+          this.designService.texts[this.designService.texts.length-1].InnerHtml=text.innerHTML
           this.testdropped=false
-
+          this.appService.ModifiyPosition(JSON.stringify(this.designService.texts[this.designService.texts.length-1].style),text.id).subscribe()
         }
         const textdrop= listtextes[listtextes.length-1] as HTMLElement ;
         if(!document.getElementById(textdrop.id)){
@@ -144,7 +261,7 @@ UpdateList(event:any,type:any){
           this.designService.icons[this.designService.icons.length-1].id=icon.id
           this.designService.ModifiyInnerHtml(icon,this.designService.listeIcon,this.designService.icons);
           this.testdropped=false
-
+          this.appService.ModifiyPosition(JSON.stringify(this.designService.icons[this.designService.icons.length-1].style),icon.id).subscribe()
         }
         let icondrop= listicons[listicons.length-1] as HTMLElement ;
         if(!document.getElementById(icondrop.id)){
@@ -174,13 +291,13 @@ UpdateList(event:any,type:any){
 
 
 delete(subItem:any){
-
     if(subItem.type=='Button'){
       let buttondelete = document.getElementById(subItem.id);
       if(buttondelete){
       buttondelete.remove();
       this.designService.delete(subItem,this.designService.buttons)
       this.designService.delete(subItem,this.designService.listebuttons)
+      this.appService.deleteElement(subItem.id).subscribe()
     }
     }
     else if (subItem.type=='Text'){
@@ -189,16 +306,16 @@ delete(subItem:any){
       textdelete.remove();
       this.designService.delete(subItem,this.designService.texts)
       this.designService.delete(subItem,this.designService.listetext)
-
+      this.appService.deleteElement(subItem.id).subscribe()
     }
     }
     else if (subItem.type=='Input'){
       let inputdelete = document.getElementById(subItem.id);
-      console.log(inputdelete)
       if (inputdelete){
       inputdelete.remove();
       this.designService.delete(subItem,this.designService.inputs)
       this.designService.delete(subItem,this.designService.listeinput)
+      this.appService.deleteElement(subItem.id).subscribe()
     }
     }
     else if (subItem.type=='Data List'){
@@ -207,6 +324,7 @@ delete(subItem:any){
       listdelete.remove();
       this.designService.delete(subItem,this.designService.lists)
       this.designService.delete(subItem,this.designService.listelists)
+      this.appService.deleteElement(subItem.id).subscribe()
     }
     }
     else if (subItem.type=='Icon'){
@@ -215,7 +333,7 @@ delete(subItem:any){
         icondelete.remove();
         this.designService.delete(subItem,this.designService.icons)
         this.designService.delete(subItem,this.designService.listeIcon)
-
+        this.appService.deleteElement(subItem.id).subscribe()
       }
     }
     else if (subItem.type=='Image'){
@@ -224,6 +342,7 @@ delete(subItem:any){
       imagedelete.remove();
       this.designService.delete(subItem,this.designService.images)
       this.designService.delete(subItem,this.designService.listeimages)
+      this.appService.deleteElement(subItem.id).subscribe()
     }
     }
      this.UpdateList(true,true);
@@ -242,25 +361,43 @@ delete(subItem:any){
 typepopup=''
 popUpOpened=true;
 nbpopupOpned=0;
+index:any;
 showPopUp(event:any,idpopup:any,idclose:any,type:any) {
   let popup = document.getElementById(idpopup)!;
   let closeBtn = document.getElementById(idclose)!;
-  const id = (event.target as HTMLElement).closest('[id]')!.id;
+  let id = (event.target as HTMLElement).closest('[id]')!.id;
   
     document.getElementById(id)!.addEventListener('click', () => {
             if (this.nbpopupOpned==0){
               popup.style.display = 'block'; 
               this.nbpopupOpned++;
+              switch(type){
+                case 'Button': this.index=this.designService.getIndex(this.designService.buttons,id)   
+                this.designService.textButton= this.designService.buttons[this.index].InnerHtml;break;
+                case 'Input': this.index=this.designService.getIndex(this.designService.inputs,id)   
+                this.designService.textinput= this.designService.inputs[this.index].InnerHtml;break;
+                case 'Text': this.index=this.designService.getIndex(this.designService.texts,id)   
+                this.designService.textlabel= this.designService.texts[this.index].InnerHtml;break;
+              }
               
-             } else {
+             }
+             else {
             popup.style.display = 'none';
             popup.style.display = 'block'; 
-        
-  }});
+         }
+});
           closeBtn.addEventListener('click', () => {
               this.nbpopupOpned=0;
-              popup.style.display = 'none';
-              
+              switch(type){
+                case 'Button': this.designService.buttons[this.index].InnerHtml = this.designService.textButton
+                this.appService.ModifiyLabel(this.designService.textButton,this.designService.buttons[this.index].id).subscribe();break;
+                case 'Input':  this.designService.inputs[this.index].InnerHtml = this.designService.textinput
+                this.appService.ModifiyLabel(this.designService.textinput,this.designService.inputs[this.index].id).subscribe();break;
+                case 'Text':  this.designService.texts[this.index].InnerHtml = this.designService.textlabel
+                this.appService.ModifiyLabel(this.designService.textlabel,this.designService.texts[this.index].id).subscribe();break;
+              }
+             
+              popup.style.display = 'none'; 
           });
           this.typepopup=type
          this.makeDraggable(popup);
@@ -365,13 +502,20 @@ showIcon(event: any) {
                   iconOption.addEventListener('click',()=>{
                              icon!.innerHTML=`<i class="bi bi-${iconNameTrimmed}"></i>`;
                              let test=false
+                             console.log(this.designService.listeIcon.length)
+                             //le cas de modifier 
                              for(let k=0;k<this.designService.listeIcon.length;k++){
+                              
                               if(this.designService.listeIcon[k].id==id){
                                 this.designService.listeIcon[k].InnerHtml=iconNameTrimmed;
+                                console.log(iconNameTrimmed)
+                                console.log(id)
+                                this.appService.ModifiyLabel(iconNameTrimmed,id).subscribe()
                                 test=true
                                 break;
                               }
                              }
+                             //le cas d'ajouter un nouveau icon
                              if(!test){
                               this.designService.listeIcon.push({'id':id,'InnerHtml':iconNameTrimmed})
                              }
@@ -384,6 +528,6 @@ showIcon(event: any) {
     }
 
 
-  
+
 
 }
