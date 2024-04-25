@@ -33,7 +33,7 @@
                   <i
                     [ngClass]="{'bi bi-chevron-right': !appitem.showSubItems, 'bi bi-chevron-down': appitem.showSubItems}"></i>
                   <i class="icon-itemTaken bi bi-window-fullscreen"></i>
-                  {{ appitem.name_app }} <i class="bi bi-plus icons-style" routerLink="/Application" ></i>
+                  {{ appitem.name_app }} <i class="bi bi-trash icons-style" (click)="deleteApp(appitem.id_app)" ></i>
                   </div>
                 </div>
           
@@ -46,7 +46,7 @@
                   <i
                     [ngClass]="{'bi bi-chevron-right': !itemTaken.showSubItems, 'bi bi-chevron-down': itemTaken.showSubItems}"></i>
                   <i class="icon-itemTaken bi bi-window-fullscreen"></i>
-                  {{ itemTaken.name_screen }} <i class="bi bi-plus icons-style" routerLink="/Screen/{{itemTaken.app}}/1"  ></i>
+                  {{ itemTaken.name_screen }} <i class="bi bi-trash icons-style" (click)="deleteScreen(itemTaken)" ></i>
                   </div>
                 </div>
 
