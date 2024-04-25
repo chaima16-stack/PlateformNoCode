@@ -1,28 +1,20 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interface Design</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" >
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg ">
+
+    <header [ngClass]="{ 'grayed-background ': appCreationService.isCreatingApp }">
+        <nav [ngClass]="{ 'navbar-disable': appCreationService.isCreatingApp }" class="navbar navbar-expand-lg navbar-expand-sm navbar-expand-xs " >
 
           
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
-                <li class="nav-item active design-item" [ngClass]="{ 'active': activeLink === 'design' }" (click)="setActiveLink('design')">
+                <li class="nav-item active design-item" [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }"  [ngClass]="{ 'active': activeLink === 'design' }" (click)="setActiveLink('design')">
                   
                   <i class="bi bi-wrench-adjustable"></i>
-                  <a class="nav-link" href="#">Design <span class="sr-only">(current)</span></a>
+                  <a class="nav-link"  routerLink="/Design">Design <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item " [ngClass]="{ 'active': activeLink === 'Workflow' }" (click)="setActiveLink('Workflow')">
+                <li class="nav-item " [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }" [ngClass]="{ 'active': activeLink === 'Workflow' }" (click)="setActiveLink('Workflow')" >
                   <i class="bi bi-diagram-2-fill"></i>
                   <a class="nav-link" href="#">Workflow</a>
                 </li>
-                <li class="nav-item " [ngClass]="{ 'active': activeLink === 'Database' }" (click)="setActiveLink('Database')">
+                <li class="nav-item " [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }" [ngClass]="{ 'active': activeLink === 'Database' }" (click)="setActiveLink('Database')">
                   
                   <i class="bi bi-database-gear "></i>
 
@@ -30,10 +22,7 @@
                   </li>
                 
               </ul>
-                <button class="btn preview-btn my-2 my-sm-0" type="submit">Preveiw</button>
+                <button [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }"  class="btn preview-btn my-2 my-sm-0" type="submit">Preveiw</button>
             </div>
           </nav>
     </header>
-    
-</body>
-</html>

@@ -1,60 +1,96 @@
 
 .preview-btn{
-background-color: #0F1CF3;
-color: white;
-font-size: 12px;
-
-}
-.navbar {
-    border-bottom: 1px solid #ccc; 
-    background-color: white;
-    height: 50px;
+  background-color: #1F1F1F;
+  color: white;
+  font-size: 12px;
+  margin-right: 10px;
   }
-.navbar-nav {
-    display: flex;
-    flex-direction: column;
+  .navbar {
+      border-bottom: 1px solid #ccc; 
+      background-color: white;
+      height: 50px;
+     
+
+    }
+  .navbar-nav {
+      display: flex;
+      flex-direction:row;
+      align-items: center;
+      margin-left: -8px;
+  
+    }
+  
+    
+    .navbar-nav .nav-item {
+      text-align: center;
+      margin-top: 8%;
+      margin-bottom: 8%;
+      border-right: 1px solid #ccc;
+      width:70px;
+    }
+    
+    
+    .navbar-nav .nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%; 
+      padding-top: 0px;
+      font-size:12px;
+      color: black;
+      font-weight: 600;
+    }
+    
+    .navbar-nav .nav-item .bi {
+      font-size: 17px; 
+      padding-bottom: 0px; 
+      margin-bottom: 0%;
+    }
+    
+    .navbar-nav .nav-item:last-child {
+      border-right: none; 
+    }
+  
+    .navbar-nav .nav-item.active .nav-link {
+      color: white; 
+  }
+  .navbar-nav .nav-item.active .bi {
+      color: white; 
+  }
+  
+  .navbar-nav .nav-item.active {
+      background-color: #1F1F1F; 
+  }
+/* Classe pour une barre de navigation extensible sur les écrans de taille très petite */
+.navbar-expand-xs {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+/* Pour afficher le bouton de basculement sur les écrans de petite taille */
+@media (max-width: 575.98px) {
+  .navbar-expand-xs > .container,
+  .navbar-expand-xs > .container-fluid,
+  .navbar-expand-xs > .container-sm,
+  .navbar-expand-xs > .container-md,
+  .navbar-expand-xs > .container-lg,
+  .navbar-expand-xs > .container-xl {
+    flex-wrap: inherit;
+  }
+  .navbar-expand-xs .navbar-nav {
+    flex-direction: row;
+  }
+  .navbar-expand-xs .navbar-nav .nav-link {
+    padding-right: .5rem;
+    padding-left: .5rem;
+  }
+  .navbar-expand-xs .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+    flex-grow: 1;
     align-items: center;
-    margin-left: -16px;
-
   }
-
-  
-  .navbar-nav .nav-item {
-    text-align: center;
-    margin-top: 8%;
-    margin-bottom: 8%;
-    border-right: 1px solid #ccc;
-width:70px;
+  .navbar-expand-xs .navbar-toggler {
+    display: block;
   }
-  
-  
-  .navbar-nav .nav-link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%; 
-    padding-top: 0px;
-    font-size:12px;
-  }
-  
-  .navbar-nav .nav-item .bi {
-    font-size: 17px; 
-    padding-bottom: 0px; 
-    margin-bottom: 0%;
-  }
-  
-  .navbar-nav .nav-item:last-child {
-    border-right: none; 
-  }
-
-  .navbar-nav .nav-item.active .nav-link {
-    color: white; 
 }
-.navbar-nav .nav-item.active .bi {
-    color: white; 
-}
-
-.navbar-nav .nav-item.active {
-    background-color: #0F1CF3; 
-}
-

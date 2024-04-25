@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppCreationServiceService } from '../services/app-service/app-creation-service.service';
 
 @Component({
   selector: 'app-header',
@@ -7,7 +8,7 @@ import { Component } from '@angular/core';
 })
 export class HeaderComponent {
   activeLink: string = ''; 
-
+constructor(public appCreationService: AppCreationServiceService){}
   setActiveLink(link: string): void {
     this.activeLink = link; 
   }
