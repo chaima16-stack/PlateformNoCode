@@ -66,7 +66,52 @@
   flex-wrap: nowrap;
   justify-content: flex-start;
 }
+.dropbtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%; 
+  padding-top: 0px;
+  margin-left: 28px;
+  font-size:12px;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dropdown {
+  position: relative;
+}
 
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #f9f9f9;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  font-size: 14px; /* Réduire la taille de la police */
+  color: black;
+  padding: 10px 16px; /* Ajuster la marge interne */
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  text-decoration: underline;
+}
 /* Pour afficher le bouton de basculement sur les écrans de petite taille */
 @media (max-width: 575.98px) {
   .navbar-expand-xs > .container,

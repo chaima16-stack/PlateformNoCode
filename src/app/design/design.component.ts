@@ -3,7 +3,7 @@ import { DesignServiceService } from '../services/design-service/design-service.
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { AppCreationServiceService } from '../services/app-service/app-creation-service.service';
-import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-design',
   templateUrl: './design.component.html',
@@ -119,37 +119,35 @@ getElement(item:any){
   
   }
 deleteApp(id:any){
-  this.appService.deleteApp(id).subscribe()
-  this.refreshListApp();
+  this.appService.deleteApp(id).subscribe((response) => {
+    location.reload();
+  }, )
+ 
 }
 deleteScreen(appitem:any){
-  this.appService.deleteScreen(appitem.id_app).subscribe()
-  this.getScreenByApp(appitem)
+  this.appService.deleteScreen(appitem.id_screen).subscribe((response) => {
+    location.reload();
+  }, )
+  
 }
  
  
  addApp() {
-   
-   
     this.appService.addApp(this.appName,this.description,new Date())
     .subscribe((response) => {
         console.log( response);
         this.router.navigate(['/Screen/'+response.id_app+'/'+this.numberOfScreens]);
       }, );
-
-      
   }
 
 toggleSubItems(item:any): void {
     item.showSubItems = !item.showSubItems;
-    
   }
 
 
   onDragStart(event: DragEvent,subItem:any) {
     this.draggedItem = event.target;
      this.subitem=subItem;
-    
   }
 
   onDragOver(event: DragEvent) {
