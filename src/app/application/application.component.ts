@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class ApplicationComponent {
   appName: string = '';
+  databaseName: string = '';
   numberOfScreens: number=0;
   description: string ='';
   

@@ -9,6 +9,9 @@ import {CdkDrag} from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { ApplicationComponent } from './application/application.component';
 import { ScreenComponent } from './screen/screen.component';
+import { DatabasesComponent } from './databases/databases.component';
+
+
 
 @NgModule({
   declarations: [
@@ -16,7 +19,10 @@ import { ScreenComponent } from './screen/screen.component';
     HeaderComponent,
     DesignComponent,
     ApplicationComponent,
-    ScreenComponent
+    ScreenComponent,
+    DatabasesComponent,
+
+   
    
   ],
   imports: [
