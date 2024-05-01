@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
+import { DatabaseServiceService } from '../database-service/database-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,31 +9,38 @@ import { Observable, catchError, throwError } from 'rxjs';
 export class AppCreationServiceService {
   isCreatingApp: boolean = false;
   idApp = 0;
-  constructor(private http: HttpClient) { }
+  
+  constructor(private http: HttpClient, private dbservice: DatabaseServiceService) { }
   startCreatingApp() {
     this.isCreatingApp = true;
   }
   private apiUrl = 'http://127.0.0.1:8000/';
-  addApp(name: string, description: string, date_creation: Date): Observable<any> {
-    const body = {
-      name: name,
-      description: description,
-      user:2,
-      date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
-      date_update: date_creation.toISOString().slice(0, 10)
-    };
-    
-    return this.http.post(this.apiUrl+'apps/', body)
-      .pipe(
-        catchError(this.handleError) // Utilisation de catchError avec la fonction de gestion d'erreur
-      );
-  }
 
-  private handleError(error: HttpErrorResponse): Observable<any> {
-    console.error('An error occurred:', error);
-    return throwError(error);  // Utilisation de throwError pour retourner un observable d'erreur
+  
+  addApp(name: string, description: string, databaseName: string, date_creation: Date): Observable<any> {
+    // Appel addDatabase pour ajouter la base de données
+    return this.dbservice.addDatabase(databaseName, date_creation).pipe(
+      switchMap(response => {
+        let id_db = response;
+        const body = {
+          name: name,
+          description: description,
+          user: 2,
+          database: id_db,
+          date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
+          date_update: date_creation.toISOString().slice(0, 10)
+        };
+  
+        // Effectuer la requête HTTP pour ajouter l'application
+        return this.http.post(this.apiUrl + 'apps/', body).pipe(
+          catchError(this.handleError)
+        );
+      })
+    );
   }
   
+ 
+
   addScreen(name: string, screenType: string,id_app:number, date_creation: Date): Observable<any> {
     const body = {
       name_screen: name,
@@ -112,5 +120,10 @@ deleteScreen(id:any){
 }
 deleteApp(id:any){
   return this.http.delete(this.apiUrl+'apps/'+id)
+}
+
+private handleError(error: HttpErrorResponse): Observable<any> {
+  console.error('An error occurred:', error);
+  return throwError(error);  // Utilisation de throwError pour retourner un observable d'erreur
 }
 }
