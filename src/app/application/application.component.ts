@@ -19,7 +19,7 @@ export class ApplicationComponent {
   submitForm() {
    
    
-    this.appService.addApp(this.appName,this.description,new Date())
+    this.appService.addApp(this.appName,this.description,this.databaseName,new Date())
     .subscribe((response) => {
         console.log( response);
         this.router.navigate(['/Screen/'+response.id_app+'/'+this.numberOfScreens]);

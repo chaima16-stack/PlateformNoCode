@@ -132,13 +132,13 @@ deleteScreen(appitem:any){
 }
  
  
- addApp() {
+/*  addApp() {
     this.appService.addApp(this.appName,this.description,new Date())
     .subscribe((response) => {
         console.log( response);
         this.router.navigate(['/Screen/'+response.id_app+'/'+this.numberOfScreens]);
       }, );
-  }
+  } */
 
 toggleSubItems(item:any): void {
     item.showSubItems = !item.showSubItems;

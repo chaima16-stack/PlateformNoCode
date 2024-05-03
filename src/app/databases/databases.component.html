@@ -3,35 +3,22 @@
   <div class="left-side">
     <ul class="entity-list">
       <h6>Entities</h6>
-      <div [ngClass]="{ active: selectedEntity === 'User' }">
+      <div
+        *ngFor="let entity of tables"
+        [ngClass]="{ active: selectedEntity === entity.name_entity }"
+      >
         <div class="divider"></div>
 
         <li>
           <div class="row">
             <div class="col-md-10 col-sm-10 col-lg-10 col-10">
-              <a class="nav-link" (click)="selectEntity('User')">User</a>
+              <a class="nav-link" (click)="selectEntity(entity)">{{
+                entity.name_entity
+              }}</a>
             </div>
             <div class="col-md-2 col-sm-2 col-lg-2 col-2">
               <i
-                class="bi bi-trash3 icons-trash"
-                title="Delete this entity"
-              ></i>
-            </div>
-          </div>
-        </li>
-      </div>
-
-      <div [ngClass]="{ active: selectedEntity === 'Employee' }">
-        <div class="divider"></div>
-        <li>
-          <div class="row">
-            <div class="col-md-10 col-sm-10 col-lg-10 col-10">
-              <a class="nav-link" (click)="selectEntity('Employee')"
-                >Employee</a
-              >
-            </div>
-            <div class="col-md-2 col-sm-2 col-lg-2 col-2">
-              <i
+                (click)="deleteEntity(entity.id)"
                 class="bi bi-trash3 icons-trash"
                 title="Delete this entity"
               ></i>
@@ -41,10 +28,17 @@
       </div>
     </ul>
     <div class="form-style">
-      <form>
+      <form id="regForm" (ngSubmit)="AddEntity()" #dbForm="ngForm">
         <div class="tab">
           <label for="name_table">New Entity</label>
-          <input id="name_table"  class="form-control" placeholder="Name Entity..." required />
+          <input
+            name="entityName"
+            [(ngModel)]="entityName"
+            class="form-control"
+            placeholder="Name Entity..."
+            required
+            ngModel
+          />
         </div>
 
         <button class="btn" type="submit">Create</button>
@@ -55,63 +49,54 @@
   <div class="right-side">
     <div class="search">
       <h6>Attributes for</h6>
-      <input id="table_modified"  value="User" placeholder="User" required />
-      <i title="Confirm the editing" class="bi bi-check-circle-fill"></i>
+
+      <input
+        id="table_modified"
+        value="User"
+        placeholder="User"
+        name="selectedEntity"
+        [(ngModel)]="selectedEntity"
+        required
+      />
+      <i
+        (click)="ModifyName()"
+        title="Confirm the editing"
+        class="bi bi-check-circle-fill"
+      ></i>
     </div>
-    <div class="divider"></div>
+    <div class="divider1"></div>
 
     <div class="attribute-list">
-      <div class="attribute row">
+      <div *ngFor="let attr of attributes" class="attribute row">
         <div class="col-md-4 col-sm-4 col-lg-4 col-4">
-          <span>Attribute 1</span>
+          <span>{{ attr.name_attribute }}</span>
         </div>
         <div class="col-md-3 col-sm-3 col-lg-3 col-3">
-          <span class="type">Text</span>
+          <span class="type">{{ attr.type_attribute }}</span>
         </div>
-        <div class="col-md-3 col-sm-3 col-lg-3 col-3">
+        <div
+          *ngIf="attr.required == 'O'"
+          class="col-md-3 col-sm-3 col-lg-3 col-3"
+        >
           <span class="required">Required</span>
         </div>
+        <div
+          *ngIf="attr.required == 'N'"
+          class="col-md-3 col-sm-3 col-lg-3 col-3"
+        >
+          <span class="required"></span>
+        </div>
         <div class="col-md-2 col-sm-2 col-lg-2 col-2">
-          <i
+          <i (click)="modify(attr.id)"
             class="bi bi-pencil-square"
             style="cursor: pointer"
             title="Modify the attribute"
           ></i>
-        </div>
-      </div>
-      <div class="attribute row">
-        <div class="col-md-4 col-sm-4 col-lg-4 col-4">
-          <span>Attribute 1</span>
-        </div>
-        <div class="col-md-3 col-sm-3 col-lg-3 col-3">
-          <span class="type">Text</span>
-        </div>
-        <div class="col-md-3 col-sm-3 col-lg-3 col-3">
-          <span class="required">Required</span>
-        </div>
-        <div class="col-md-2 col-sm-2 col-lg-2 col-2">
           <i
-            class="bi bi-pencil-square"
-            style="cursor: pointer"
-            title="Modify the attribute"
-          ></i>
-        </div>
-      </div>
-      <div class="attribute row">
-        <div class="col-md-4 col-sm-4 col-lg-4 col-4">
-          <span>Attribute 1</span>
-        </div>
-        <div class="col-md-3 col-sm-3 col-lg-3 col-3">
-          <span class="type">Text</span>
-        </div>
-        <div class="col-md-3 col-sm-3 col-lg-3 col-3">
-          <span class="required">Required</span>
-        </div>
-        <div class="col-md-2 col-sm-2 col-lg-2 col-2">
-          <i
-            class="bi bi-pencil-square"
-            style="cursor: pointer"
-            title="Modify the attribute"
+            (click)="deleteAttribute(attr.id)"
+            class="bi bi-trash"
+            style="cursor: pointer; margin-left: 5px"
+            title="Delete the attribute"
           ></i>
         </div>
       </div>
@@ -121,14 +106,19 @@
     </button>
   </div>
 </div>
-<!-- Fenêtre modale -->
+<!-- Fenêtre modale Ajout-->
 <div class="modal" id="myModal">
   <div class="modal-dialog">
     <div class="modal-content">
       <!-- En-tête de la fenêtre modale -->
       <div class="modal-header">
         <h4 class="modal-title">New Attribute</h4>
-        <button type="button" class="close" (click)="closeModal()" data-dismiss="modal">
+        <button
+          type="button"
+          class="close"
+          (click)="closeModal()"
+          data-dismiss="modal"
+        >
           &times;
         </button>
       </div>
@@ -136,43 +126,77 @@
       <!-- Corps de la fenêtre modale -->
       <div class="modal-body">
         <!-- Formulaire de modification -->
-        <form>
+        <form
+          id="attributeForm"
+          (ngSubmit)="submitForm()"
+          #attributeForm="ngForm"
+        >
           <div class="form-group">
             <label for="attributeName">Name of Attribute:</label>
-            <input type="text" placeholder="Attribute's name" class="form-control" id="attributeName" />
+            <input
+              type="text"
+              name="attributeName"
+              [(ngModel)]="attributeName"
+              placeholder="Attribute's name"
+              class="form-control"
+              id="attributeName"
+            />
           </div>
-         <div class="form-group">
-  <label for="attributeType">Type of Attribute:</label>
-  <div class="select-with-icon">
-    <select class="form-control" id="attributeType">
-      <option value="text">Text</option>
-      <option value="number">Number</option>
-    </select>
-    <i class="bi bi-caret-down-fill"></i>
-  </div>
-</div>
+
+          <div class="form-group">
+            <label for="attributeType">Type of Attribute:</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="attributeType"
+                name="selectedAttributeType"
+                [(ngModel)]="selectedAttributeType"
+              >
+                <option *ngIf="this.typeform=='update'" [value]="selectedAttributeType">{{selectedAttributeType}}</option>
+                <option *ngIf="this.typeform=='update'" >----------------------------------------------------------------------</option>
+                <option *ngFor="let type of attributeTypes" [value]="type">
+                  {{ type }}
+                </option>
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
 
           <div class="form-group form-check">
-          <input type="checkbox" class="form-check-input" id="idCheckbox" />
-            <label class="form-check-label" for="idCheckbox">This is field is a list (multiple entries)</label>
             <input
               type="checkbox"
               class="form-check-input"
-              id="requiredCheckbox"/>
-            <label class="form-check-label" for="requiredCheckbox">Required</label>
-            
+              id="idCheckbox"
+              name="islistField"
+              [(ngModel)]="islistField"
+            />
+            <label class="form-check-label" for="idCheckbox"
+              >This is field is a list (multiple entries)</label
+            >
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="requiredCheckbox"
+              name="isRequiredField"
+              [(ngModel)]="isRequiredField"
+            />
+            <label class="form-check-label" for="requiredCheckbox"
+              >Required</label
+            >
           </div>
-           <!-- Pied de la fenêtre modale -->
-     
-        <button type="button" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-secondary" (click)="closeModal()" data-dismiss="modal">
-          Close
-        </button>
-     
+
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal()"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
         </form>
       </div>
-
-     
     </div>
   </div>
 </div>
+

@@ -19,6 +19,10 @@
     border-top: 1px solid #ccc; 
     width: 90%;
 }
+.divider1 {
+  border-top: 1px solid #ccc; 
+  width: 95%;
+}
 
 .attribute-list {
     margin-top: 20px;
