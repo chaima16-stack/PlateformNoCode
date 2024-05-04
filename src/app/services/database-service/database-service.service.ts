@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, noop, throwError } from 'rxjs';
 import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 
 @Injectable({
@@ -98,5 +98,87 @@ ModifyAttribute(id:number,attributename:string, type_attribute:string,listfield:
 }
 listAttributes(id:number){
   return this.http.get(this.apiUrl+'attributes/'+id)
+}
+
+//Mongodb 
+Createdb(db_name:string){
+  const body={
+    db_name: db_name
+  }
+  return this.http.post(this.apiUrl+'DatabasesApp/',body)
+}
+
+ModifyNamedb(old_db_name:string,new_db_name:string){
+  const body={
+    db_name: new_db_name,
+    old_db_name: old_db_name
+  }
+  return this.http.put(this.apiUrl+'DatabasesApp/',body)
+}
+
+InsertCollection(db_name:string,collection_name:string){
+  const body= {
+    db_name: db_name,
+    collection_name: collection_name
+  }
+  return this.http.post(this.apiUrl+'Collection/',body)
+}
+deleteCollection(db_name:string,collection_name:string){
+  const body={
+    db_name: db_name,
+    collection_name: collection_name
+  }
+  return this.http.delete(this.apiUrl+'Collection/', {body})
+}
+UpdateNameCollection(db_name:string,new_collection_name:string,old_collection_name:string){
+  const body= {
+    db_name: db_name,
+    collection_name: new_collection_name,
+    old_collection_name :old_collection_name
+  }
+  return this.http.put(this.apiUrl+'Collection/',body)
+}
+
+getData(db_name:string, collection_name:string){
+  const params = {
+    db_name: db_name,
+    collection_name: collection_name
+  };
+  return this.http.get(`${this.apiUrl}Document/`, { params });
+}
+
+insertAttribute(db_name:string,collection_name:string,attributes:any){
+  const body={
+    db_name: db_name,
+    collection_name: collection_name,
+    attributes : attributes
+  }
+  return this.http.post(this.apiUrl+'Document/',body)
+}
+update_data(db_name:string,collection_name:string,update_data:any,id:string){
+  const body={
+    db_name: db_name,
+    collection_name: collection_name,
+    attributes : update_data,
+    id :id
+  }
+  return this.http.put(this.apiUrl+'Document/',body)
+}
+deleteDta(db_name:string,collection_name:string,id:string){
+  const body={
+    db_name: db_name,
+    collection_name: collection_name,
+    id:id
+  }
+  return this.http.delete(this.apiUrl+'Document/', {body})
+}
+
+deleteAttributefromCollection(db_name:string,collection_name:string,attributes:any){
+  const body={
+    db_name: db_name,
+    collection_name: collection_name,
+    attributes:attributes
+  }
+  return this.http.delete(this.apiUrl+'Attribute/', {body})
 }
 }
