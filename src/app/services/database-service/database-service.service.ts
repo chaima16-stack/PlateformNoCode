@@ -65,6 +65,15 @@ addRelation(name_relation:string, type_attribute:string,date_creation:Date): Obs
     catchError(this.handleError)
   )
 }
+getDataBase(id:number){
+  return this.http.get(this.apiUrl+'databases/'+id)
+}
+getEntityById(id:number){
+  return this.http.get(this.apiUrl+'entities/'+id)
+}
+getAttributeById(id:number){
+  return this.http.get(this.apiUrl+'attributes/'+id)
+}
 tableListByDatabase(idbd:number){
   const params = new HttpParams().set('db', idbd.toString());
   return this.http.get(this.apiUrl+'/entitiesByDatabase', { params });
@@ -85,12 +94,9 @@ deleteDatabase(id:number){
 ModifyTableName(id:number,newName:string){
   return this.http.patch(this.apiUrl+'entities/'+id+'/', {"name_entity": newName});
 }
-ModifyAttribute(id:number,attributename:string, type_attribute:string,listfield:string,required:string,date_update:Date){
+ModifyAttribute(id:number,attributename:string,date_update:Date){
   const body ={
     name_attribute: attributename,
-    type_attribute: type_attribute,
-    listField: listfield,
-    required: required,
     date_update: date_update.toISOString().slice(0, 10)
     }
     
@@ -124,11 +130,12 @@ InsertCollection(db_name:string,collection_name:string){
   return this.http.post(this.apiUrl+'Collection/',body)
 }
 deleteCollection(db_name:string,collection_name:string){
-  const body={
-    db_name: db_name,
-    collection_name: collection_name
-  }
-  return this.http.delete(this.apiUrl+'Collection/', {body})
+ 
+  let params = new HttpParams()
+  .set('db_name', db_name.toString())
+  .set('collection_name', collection_name.toString());
+  
+  return this.http.delete(this.apiUrl+'/Collection', {params})
 }
 UpdateNameCollection(db_name:string,new_collection_name:string,old_collection_name:string){
   const body= {
@@ -140,14 +147,13 @@ UpdateNameCollection(db_name:string,new_collection_name:string,old_collection_na
 }
 
 getData(db_name:string, collection_name:string){
-  const params = {
-    db_name: db_name,
-    collection_name: collection_name
-  };
+  let params = new HttpParams()
+  .set('db_name', db_name.toString())
+  .set('collection_name', collection_name.toString());
   return this.http.get(`${this.apiUrl}Document/`, { params });
 }
 
-insertAttribute(db_name:string,collection_name:string,attributes:any){
+insertData(db_name:string,collection_name:string,attributes:any){
   const body={
     db_name: db_name,
     collection_name: collection_name,
@@ -164,21 +170,46 @@ update_data(db_name:string,collection_name:string,update_data:any,id:string){
   }
   return this.http.put(this.apiUrl+'Document/',body)
 }
-deleteDta(db_name:string,collection_name:string,id:string){
-  const body={
-    db_name: db_name,
-    collection_name: collection_name,
-    id:id
-  }
-  return this.http.delete(this.apiUrl+'Document/', {body})
+deleteData(db_name:string,collection_name:string,id:string){
+
+  let params = new HttpParams()
+  .set('db_name', db_name.toString())
+  .set('collection_name', collection_name.toString())
+  .set('id',id.toString());
+  return this.http.delete(this.apiUrl+'Document/', {params})
 }
 
 deleteAttributefromCollection(db_name:string,collection_name:string,attributes:any){
+  let params = new HttpParams()
+  .set('db_name', db_name.toString())
+  .set('collection_name', collection_name.toString())
+  .set('attribute',attributes.toString());
+  return this.http.delete(this.apiUrl+'Attribute/', {params})
+}
+updateAttibuteInCollection(db_name:string,collection_name:string,old_attribute_name:string,new_attribute_name:string){
   const body={
     db_name: db_name,
-    collection_name: collection_name,
-    attributes:attributes
+    attribute: new_attribute_name,
+    old_attribute_name:old_attribute_name,
+    collection_name:collection_name
   }
-  return this.http.delete(this.apiUrl+'Attribute/', {body})
+
+  return this.http.put(this.apiUrl+'Attribute/', body)
+}
+addNewAttribute(db_name:string,collection_name:string,attribut:string){
+  const body={
+    db_name: db_name,
+    attribute: attribut,
+    collection_name:collection_name
+  }
+  return this.http.post(this.apiUrl+'Attribute/',body)
+}
+
+getDocumentById(db_name:string,collection_name:string,id:string){
+  let params = new HttpParams()
+  .set('db_name', db_name.toString())
+  .set('collection_name', collection_name.toString())
+  .set('id',id.toString());
+  return this.http.get(this.apiUrl+'DocumentsById/', {params})
 }
 }

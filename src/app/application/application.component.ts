@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AppCreationServiceService } from '../services/app-service/app-creation-service.service';
 import { Router } from '@angular/router';
+import { DatabaseServiceService } from '../services/database-service/database-service.service';
 
 @Component({
   selector: 'app-application',
@@ -13,7 +14,7 @@ export class ApplicationComponent {
   numberOfScreens: number=0;
   description: string ='';
   
-  constructor(public appService: AppCreationServiceService,private router: Router){}
+  constructor(private dbservice :DatabaseServiceService,public appService: AppCreationServiceService,private router: Router){}
  
 
   submitForm() {
@@ -21,10 +22,12 @@ export class ApplicationComponent {
    
     this.appService.addApp(this.appName,this.description,this.databaseName,new Date())
     .subscribe((response) => {
-        console.log( response);
+      this.dbservice.Createdb(this.databaseName).subscribe((data)=>{
+        console.log(data)
+      });
         this.router.navigate(['/Screen/'+response.id_app+'/'+this.numberOfScreens]);
       }, );
-
+    
       
   }
 

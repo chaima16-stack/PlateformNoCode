@@ -177,3 +177,63 @@ label {
   transform: translateY(-50%); /* Correction pour l'alignement vertical */
   pointer-events: none; /* Pour éviter que l'icône ne soit cliquable */
 }
+/* CSS pour les liens */
+.additional-links {
+  float: right;
+  margin-top: 35px;
+  margin-right: 35px;
+}
+
+.additional-links .link {
+  color: rgb(0, 0, 0);
+  text-decoration: underline;
+  margin-left: 2px;
+  cursor: pointer;
+}
+
+.additional-links .divider {
+  margin: 0 5px;
+  font-weight: bold;
+}
+.additional-links .link:hover{
+  color: rgb(91, 89, 89);
+}
+.search-bar {
+  width:15%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  
+}
+.searchbar{
+  margin-bottom: 10px;
+  
+}
+/* Style du tableau */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+
+
+.table td {
+  padding: 2px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.table-header td {
+  text-align: center;
+  background-color: #CCCCCC;
+  color: rgb(0, 0, 0);
+}
+
+/* Style des boutons du pied de la fenêtre modale */
+.modal-footer button {
+  margin-right: 10px;
+}
+.modal-custom {
+  max-width: 90%; /* Ou toute autre valeur de largeur que vous souhaitez */
+}
