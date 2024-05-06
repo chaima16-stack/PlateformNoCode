@@ -87,13 +87,13 @@
           <span class="required"></span>
         </div>
         <div class="col-md-2 col-sm-2 col-lg-2 col-2">
-          <i (click)="modify(attr.id)"
+          <i (click)="modify(attr)"
             class="bi bi-pencil-square"
             style="cursor: pointer"
             title="Modify the attribute"
           ></i>
           <i
-            (click)="deleteAttribute(attr.id)"
+            (click)="deleteAttribute(attr)"
             class="bi bi-trash"
             style="cursor: pointer; margin-left: 5px"
             title="Delete the attribute"
@@ -101,9 +101,17 @@
         </div>
       </div>
     </div>
+   <div>
+    
     <button class="submit-button" (click)="openModal()">
       Add new attributes
     </button>
+     <div class="additional-links">
+            <a (click)="openModalData()" class="link">Add Data</a>
+            <span class="divider">|</span>
+            <a (click)="openModalAdd()" class="link">View Data</a>
+        </div>
+        </div>
   </div>
 </div>
 <!-- Fenêtre modale Ajout-->
@@ -112,7 +120,8 @@
     <div class="modal-content">
       <!-- En-tête de la fenêtre modale -->
       <div class="modal-header">
-        <h4 class="modal-title">New Attribute</h4>
+        <h4 *ngIf="this.typeform!='update'" class="modal-title">New Attribute</h4>
+          <h4 *ngIf="this.typeform=='update'" class="modal-title">Update the Attribute</h4>
         <button
           type="button"
           class="close"
@@ -143,7 +152,7 @@
             />
           </div>
 
-          <div class="form-group">
+          <div *ngIf="this.typeform!='update'" class="form-group">
             <label for="attributeType">Type of Attribute:</label>
             <div class="select-with-icon">
               <select
@@ -152,8 +161,7 @@
                 name="selectedAttributeType"
                 [(ngModel)]="selectedAttributeType"
               >
-                <option *ngIf="this.typeform=='update'" [value]="selectedAttributeType">{{selectedAttributeType}}</option>
-                <option *ngIf="this.typeform=='update'" >----------------------------------------------------------------------</option>
+              
                 <option *ngFor="let type of attributeTypes" [value]="type">
                   {{ type }}
                 </option>
@@ -162,7 +170,7 @@
             </div>
           </div>
 
-          <div class="form-group form-check">
+          <div *ngIf="this.typeform!='update'"  class="form-group form-check">
             <input
               type="checkbox"
               class="form-check-input"
@@ -196,7 +204,148 @@
           </button>
         </form>
       </div>
+
+      
     </div>
   </div>
 </div>
 
+
+<!-- Fenêtre modale View Data-->
+<div class="modal " id="myModalAdd">
+  <div class="modal-dialog modal-custom ">
+    <div class="modal-content">
+      <!-- En-tête de la fenêtre modale -->
+      <div class="modal-header">
+        <h4 class="modal-title">View Data</h4>
+        <button
+          type="button"
+          class="close"
+          (click)="closeModalAdd()"
+          data-dismiss="modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Corps de la fenêtre modale -->
+      <div class="modal-body">
+        <!-- Barre de recherche -->
+        <div class="searchbar search">
+          <input type="text" placeholder="Search..." class="search-bar"><i style="margin-left: 5px; font-size:15px" class="bi bi-search"></i>
+        </div>
+        
+        <!-- Tableau -->
+        <table class="table">
+          <thead class="table-header">
+            <tr>
+              <td *ngFor="let attr of attributes">{{attr.name_attribute}}</td>
+              <td></td>
+            
+            </tr>
+          </thead>
+          <tbody>
+    
+            <tr *ngFor="let value of data">
+              <td *ngFor="let i of index">{{value[attributes[i].name_attribute]}}</td>
+              
+              <td><i  (click)="ModifyData(value.id)"
+            class="bi bi-pencil-square"
+            style="cursor: pointer"
+         
+          ></i>
+          <i
+            (click)="DeleteData(value.id)"
+            class="bi bi-trash"
+            style="cursor: pointer; margin-left: 5px"
+         
+          ></i></td>
+            </tr>
+            <!-- Ajoutez d'autres lignes de données au besoin -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pied de la fenêtre modale -->
+      <div class="modal-footer">
+        <button
+        style="width:10%;"
+          type="button"
+          class="btn btn-secondary"
+          (click)="closeModalAdd()"
+          data-dismiss="modal"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fenêtre modale Ajout-->
+<div class="modal" id="myModalData">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- En-tête de la fenêtre modale -->
+      <div class="modal-header">
+        <h4  class="modal-title">Data Management</h4>
+       
+        <button
+          type="button"
+          class="close"
+          (click)="closeModalData()"
+          data-dismiss="modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Corps de la fenêtre modale -->
+      <div class="modal-body">
+        <!-- Formulaire d4jout de données -->
+        <form
+          id="attributeForm"
+          (ngSubmit)="SubmitFormData()"
+          #attributeForm="ngForm"
+        >
+          <div *ngFor="let attr of attributes" class="form-group">
+
+            <label  *ngIf="attr.name_attribute!='Date_creation' && attr.name_attribute!='Date_update'"  >{{attr.name_attribute}}</label>
+            <input  *ngIf="attr.name_attribute!='Date_creation'  && attr.name_attribute!='Date_update' && formData == 'insert' " 
+              type="text"
+              name=attr.value
+              
+              [(ngModel)]=attr.value
+              placeholder="Write Here..."
+              class="form-control"
+       
+            />
+           <input *ngIf="attr.name_attribute !== 'Date_creation' && attr.name_attribute !== 'Date_update' && formData=='update'" 
+                type="text"
+                id={{attr.name_attribute}}
+                name={{attr.name_attribute}}
+                value={{attr.value}}
+                placeholder="Write Here..."
+                class="form-control"
+            />
+          </div>
+
+        
+          
+
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button
+          
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModalData()"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </form>
+      </div>
+
+      
+    </div>
+  </div>
+</div>
