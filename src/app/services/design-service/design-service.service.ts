@@ -21,6 +21,7 @@ export class DesignServiceService {
   textButton="Button"
   textlabel="Text"
   textinput="Type a placeholder here ...."
+  textlist=""
   constructor(private appservice:AppCreationServiceService) { }
 
 delete(element:any,liste:any){
