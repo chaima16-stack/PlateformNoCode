@@ -3,7 +3,8 @@ import { DesignServiceService } from '../services/design-service/design-service.
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { AppCreationServiceService } from '../services/app-service/app-creation-service.service';
-
+import { DatabaseServiceService } from '../services/database-service/database-service.service';
+declare var $: any;
 @Component({
   selector: 'app-design',
   templateUrl: './design.component.html',
@@ -21,7 +22,10 @@ export class DesignComponent implements OnInit {
   draggedlist=false;
   subitem:any;
   testdropped=false // pour tester s'il s'agit des élement dropped
-
+  data:any
+  k:any
+  tables:any
+  attributes:any
   items = [
     { name: 'Elements Tree',subItems: [], showSubItems: false },
     { name: 'Elements', subItems: ['Text', 'Button', 'Icon','Image','Data List'] ,showSubItems: false},
@@ -34,11 +38,16 @@ export class DesignComponent implements OnInit {
   app:any // apps by user connected
   itemsTaken :any //screens by app
   idscreen:any
-  constructor(public appService: AppCreationServiceService,public designService:DesignServiceService,private route: ActivatedRoute,private router: Router){}
+  databaseconnected=""
+  constructor(private dbservice:DatabaseServiceService ,public appService: AppCreationServiceService,public designService:DesignServiceService,private route: ActivatedRoute,private router: Router){}
  
   ngOnInit(): void {
     //liste des apps d'user connecté 
     this.refreshListApp();
+    this.dbservice.getDataBase(17).subscribe((data:any)=>{
+      this.databaseconnected = data.name_db
+   })
+   this.TableByDatabase();
   }
 refreshListApp(){
   this.appService.getAppByUser(2).subscribe((response)=>{
@@ -78,6 +87,7 @@ getElement(item:any){
     this.designService.inputs=[]
     this.designService.texts=[]
     this.designService.icons=[]
+    this.designService.lists=[]
     this.designService.listItem=[]
     this.appService.getElmentByScreen(item.id_screen).subscribe((response) => {
       const elementsArray = Array.isArray(response) ? response : [response];
@@ -87,13 +97,37 @@ getElement(item:any){
           style: obj,
           id: elementsArray[i].id_element,
           InnerHtml: elementsArray[i].label,
-          type: elementsArray[i].type_element
+          type: elementsArray[i].type_element,
+          attributes : [],
+          data : [],
+          k :[]
         };
         switch(element.type){
           case 'Button': this.designService.buttons.push(element);break;
           case 'Input': this.designService.inputs.push(element);break;
           case 'Text':this.designService.texts.push(element);break;
           case 'Icon': this.designService.icons.push(element);break;
+          case 'Data List': 
+          this.appService.getIdEntityByDatabase(17,elementsArray[i].label).subscribe((data:any)=>{
+            this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
+              this.attributes= Array.isArray(response) ? response : [response];
+              
+              this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
+               element.attributes=this.attributes
+               this.k=this.generateArray(this.attributes.length)
+               element.k =this.k
+               this.dbservice.getData(this.databaseconnected,elementsArray[i].label).subscribe((response:any)=>{
+                this.data= Array.isArray(response.result) ? response.result : [response.result];
+                element.data =this.data
+                
+              
+              })
+            })
+          })
+          
+
+          this.designService.lists.push(element); 
+           break;
         }
 
         this.designService.listItem.push({
@@ -105,7 +139,7 @@ getElement(item:any){
       this.draggedInput = true; 
       this.draggedText = true;
       this.draggedIcon = true;
-      this.draggedText =true;
+      this.draggedlist =true;
     });
   
   
@@ -185,8 +219,12 @@ toggleSubItems(item:any): void {
           if(!this.testdropped)
             this.appService.AddElementByScreen(this.idscreen,Info.id, 'Icon','person', JSON.stringify(Info.style), new Date()).subscribe();break;
           case'Image': this.draggedImage=true;Info.type = 'Image';Info.id='droppedImage'+this.designService.getUniqueRandomId('droppedImage',this.designService.images);this.designService.images.push(Info);break;
-          case'Data List': this.draggedlist=true;Info.type = 'Data List';Info.id='droppedlist'+this.designService.getUniqueRandomId('droppedlist',this.designService.lists);this.designService.lists.push(Info);break;
-        }
+          case'Data List': this.draggedlist=true;Info.type = 'Data List';Info.id='droppedlist'+this.designService.getUniqueRandomId('droppedlist',this.designService.lists);this.designService.lists.push(Info);
+  
+          if(!this.testdropped)
+            this.appService.AddElementByScreen(this.idscreen,Info.id, 'Data List','Data List', JSON.stringify(Info.style), new Date()).subscribe();break;
+         
+        }            
        if(this.testdropped){
         this.draggedItem.remove();
        
@@ -199,11 +237,12 @@ toggleSubItems(item:any): void {
   }
 
 
-UpdateList(event:any,type:any){
+UpdateList(event:any,type:any,table:any){
     let listbuttons = document.getElementsByClassName("buttonsdropped");
     let listtextes = document.getElementsByClassName("texte");
     let listinputs = document.getElementsByClassName("input-like");
     let listicons = document.getElementsByClassName("icon-like");
+    let listelists = document.getElementsByClassName("list-like")
     this.designService.listItem=[]
     if(event!=true){
     switch(type){
@@ -276,8 +315,33 @@ UpdateList(event:any,type:any){
       case'Data List': 
         if(this.testdropped){
 
-
-        }break;
+          const list= (event.target as HTMLElement)
+          this.designService.delete(list,this.designService.lists)
+          this.designService.lists[this.designService.lists.length-1].id=list.id
+          this.designService.lists[this.designService.lists.length-1].InnerHtml=table
+          this.appService.getIdEntityByDatabase(17,table).subscribe((data:any)=>{
+            this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
+              this.attributes= Array.isArray(response) ? response : [response];
+              
+              this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
+              this.designService.lists[this.designService.lists.length-1].attributes=this.attributes
+               this.k=this.generateArray(this.attributes.length)
+               this.designService.lists[this.designService.lists.length-1].k =this.k
+               this.dbservice.getData(this.databaseconnected,table).subscribe((response:any)=>{
+                this.data= Array.isArray(response.result) ? response.result : [response.result];
+                this.designService.lists[this.designService.lists.length-1].data =this.data
+              
+              })
+            })
+          })
+          this.testdropped=false
+          this.appService.ModifiyPosition(JSON.stringify(this.designService.lists[this.designService.lists.length-1].style),list.id).subscribe()
+        }
+        const listdrop= listelists[listelists.length-1] as HTMLElement ;
+        
+        if(!document.getElementById(listdrop.id)){
+          listdrop.setAttribute('id',this.designService.lists[this.designService.lists.length-1].id);
+           };break;
     }
   }
  
@@ -285,6 +349,7 @@ UpdateList(event:any,type:any){
   this.designService.AddElementToListItem('Button',listbuttons)
   this.designService.AddElementToListItem('Input',listinputs)
   this.designService.AddElementToListItem('Text',listtextes)
+  this.designService.AddElementToListItem('Data List',listelists)
   }
 
 
@@ -343,7 +408,7 @@ delete(subItem:any){
       this.appService.deleteElement(subItem.id).subscribe()
     }
     }
-     this.UpdateList(true,true);
+     this.UpdateList(true,true,true);
  
   }
 
@@ -364,7 +429,8 @@ showPopUp(event:any,idpopup:any,idclose:any,type:any) {
   let popup = document.getElementById(idpopup)!;
   let closeBtn = document.getElementById(idclose)!;
   let id = (event.target as HTMLElement).closest('[id]')!.id;
-  
+
+
     document.getElementById(id)!.addEventListener('click', () => {
             if (this.nbpopupOpned==0){
               popup.style.display = 'block'; 
@@ -376,6 +442,7 @@ showPopUp(event:any,idpopup:any,idclose:any,type:any) {
                 this.designService.textinput= this.designService.inputs[this.index].InnerHtml;break;
                 case 'Text': this.index=this.designService.getIndex(this.designService.texts,id)   
                 this.designService.textlabel= this.designService.texts[this.index].InnerHtml;break;
+                
               }
               
              }
@@ -393,6 +460,7 @@ showPopUp(event:any,idpopup:any,idclose:any,type:any) {
                 this.appService.ModifiyLabel(this.designService.textinput,this.designService.inputs[this.index].id).subscribe();break;
                 case 'Text':  this.designService.texts[this.index].InnerHtml = this.designService.textlabel
                 this.appService.ModifiyLabel(this.designService.textlabel,this.designService.texts[this.index].id).subscribe();break;
+                
               }
              
               popup.style.display = 'none'; 
@@ -443,7 +511,7 @@ showIcon(event: any) {
       const iconlist = document.getElementById('iconList');
       const nextPageBtn = document.getElementById("nextPageBtn");
       const prevPageBtn = document.getElementById("prevPageBtn");
-
+  
       const id = (event.target as HTMLElement).closest('[id]')!.id
       let icon = document.getElementById(id);
 
@@ -500,14 +568,11 @@ showIcon(event: any) {
                   iconOption.addEventListener('click',()=>{
                              icon!.innerHTML=`<i class="bi bi-${iconNameTrimmed}"></i>`;
                              let test=false
-                             console.log(this.designService.listeIcon.length)
                              //le cas de modifier 
                              for(let k=0;k<this.designService.listeIcon.length;k++){
                               
                               if(this.designService.listeIcon[k].id==id){
                                 this.designService.listeIcon[k].InnerHtml=iconNameTrimmed;
-                                console.log(iconNameTrimmed)
-                                console.log(id)
                                 this.appService.ModifiyLabel(iconNameTrimmed,id).subscribe()
                                 test=true
                                 break;
@@ -525,7 +590,47 @@ showIcon(event: any) {
       }
     }
 
+generateArray(n:number): number[] {
+      return Array(n).fill(0).map((x, i) => i);
+    }
 
 
+TableByDatabase(){
+  this.dbservice.tableListByDatabase(17).subscribe((response)=>{
+    this.tables = Array.isArray(response) ? response : [response];
+    
+  })
+ }
 
+
+idlist:any;
+openModal(id:any) {
+  $('#myModal').modal('show'); 
+  this.idlist = id;
+  this.index=this.designService.getIndex(this.designService.lists,this.idlist)   
+  this.designService.textlist= this.designService.lists[this.index].InnerHtml;
+}
+closeModal() {
+ 
+  $('#myModal').modal('hide'); 
+ 
+  this.designService.lists[this.index].InnerHtml = this.designService.textlist
+  this.appService.ModifiyLabel(this.designService.textlist,this.designService.lists[this.index].id).subscribe();
+  this.appService.getIdEntityByDatabase(17,this.designService.textlist).subscribe((data:any)=>{
+    this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
+      this.attributes= Array.isArray(response) ? response : [response];
+      
+      this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
+      this.designService.lists[this.index].attributes=this.attributes
+       this.k=this.generateArray(this.attributes.length)
+       this.designService.lists[this.index].k =this.k
+       this.dbservice.getData(this.databaseconnected,this.designService.textlist).subscribe((response:any)=>{
+        this.data= Array.isArray(response.result) ? response.result : [response.result];
+        this.designService.lists[this.index].data =this.data
+        
+      
+      })
+    })
+  })
+}
 }
