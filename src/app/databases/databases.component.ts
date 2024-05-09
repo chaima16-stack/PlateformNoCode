@@ -23,7 +23,7 @@ export class DatabasesComponent implements OnInit  {
 constructor(private dbservice:DatabaseServiceService, private http: HttpClient){}
 ngOnInit(): void {
   this.loadAttributeTypes();
-  this.dbservice.tableListByDatabase(14).subscribe((response)=>{
+  this.dbservice.tableListByDatabase(17).subscribe((response)=>{
     this.tables = Array.isArray(response) ? response : [response];
     for(let i=0; i<this.tables.length;i++){
       if(this.tables[i].name_entity == 'User'){
@@ -59,7 +59,7 @@ ngOnInit(): void {
     });
   }
 AddEntity(){
-  this.dbservice.addTable(this.entityName,14,new Date()).subscribe();
+  this.dbservice.addTable(this.entityName,17,new Date()).subscribe();
   this.TableByDatabase()
   this.entityName=""
 }
@@ -72,7 +72,7 @@ AddAttribute(){
 }
 
 TableByDatabase(){
- this.dbservice.tableListByDatabase(14).subscribe((response)=>{
+ this.dbservice.tableListByDatabase(17).subscribe((response)=>{
    this.tables = Array.isArray(response) ? response : [response];
  })
 }
