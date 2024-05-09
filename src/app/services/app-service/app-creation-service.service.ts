@@ -126,4 +126,10 @@ private handleError(error: HttpErrorResponse): Observable<any> {
   console.error('An error occurred:', error);
   return throwError(error);  // Utilisation de throwError pour retourner un observable d'erreur
 }
+getIdEntityByDatabase(iddb:number,entityName:string){
+  const params = new HttpParams()
+  .set('db', iddb.toString())
+  .set('name_entity',entityName.toString());
+  return this.http.get(this.apiUrl+'entitiesByDatabase/',{params})
+}
 }

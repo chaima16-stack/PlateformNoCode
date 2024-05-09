@@ -107,7 +107,7 @@
               </div>
               <ul *ngIf="item.showSubItems" class="grid-container">
                 <li *ngFor="let subItem of item.subItems" class="grid-item">
-                  <div class="frame"  draggable="true" (dragstart)="onDragStart($event,subItem)" (dragend)="UpdateList($event,subitem)" >
+                  <div class="frame"  draggable="true" (dragstart)="onDragStart($event,subItem)" (dragend)="UpdateList($event,subitem,true)" >
                     <i class="icon-style1"
                       [ngClass]="{
                         'bi bi-fonts': subItem=='Text',
@@ -132,12 +132,39 @@
     <main class="col-md-10 col-8 col-sm-9 ms-sm-auto col-lg-9 px-md-4">
       <div id="page" class="rectangle" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
 
-        <div #buttonsdropped *ngFor="let button of designService.buttons" id={{button.id}} [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" (dragend)="UpdateList($event,'Button')" [draggable]="true" (click)="showPopUp($event,'popup','close','Button')">{{button.InnerHtml}}</div>
-         <div *ngFor="let text of designService.texts" id={{text.id}} [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true" (dragend)="UpdateList($event,'Text')" (click)="showPopUp($event,'popup','close','Text')">{{text.InnerHtml}}</div>
-         <div *ngFor="let input of designService.inputs" id={{input.id}} [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true" (dragend)="UpdateList($event,'Input')" (click)="showPopUp($event,'popup','close','Input')">{{input.InnerHtml}}</div>
-         <div *ngFor="let icon of designService.icons" [ngClass]="{'icon-like':draggedIcon}"   id={{icon.id}} [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true" (click)="showIcon($event)" (dragend)="UpdateList($event,icon.type)"><i class="bi bi-{{icon.InnerHtml}}"></i></div>
+        <div #buttonsdropped *ngFor="let button of designService.buttons" id={{button.id}} [ngClass]="{'buttonsdropped btn btn-primary d-grid text-uppercase fw-bold':draggedbutton,}"   [ngStyle]="button.style" (dragstart)="ModifyDrag($event,'Button')" (dragend)="UpdateList($event,'Button',true)" [draggable]="true" (click)="showPopUp($event,'popup','close','Button')">{{button.InnerHtml}}</div>
+         <div *ngFor="let text of designService.texts" id={{text.id}} [ngClass]="{'texte':draggedText}"   [ngStyle]="text.style" (dragstart)="ModifyDrag($event,'Text')" [draggable]="true" (dragend)="UpdateList($event,'Text',true)" (click)="showPopUp($event,'popup','close','Text')">{{text.InnerHtml}}</div>
+         <div *ngFor="let input of designService.inputs" id={{input.id}}  [ngClass]="{'input-like':draggedInput}"   [ngStyle]="input.style" (dragstart)="ModifyDrag($event,'Input')" [draggable]="true" (dragend)="UpdateList($event,'Input',true)" (click)="showPopUp($event,'popup','close','Input')">{{input.InnerHtml}}</div>
+         <div *ngFor="let icon of designService.icons" [ngClass]="{'icon-like':draggedIcon}"   id={{icon.id}} [ngStyle]="icon.style" (dragstart)="ModifyDrag($event,'Icon')" [draggable]="true" (click)="showIcon($event)" (dragend)="UpdateList($event,icon.type,true)"><i class="bi bi-{{icon.InnerHtml}}"></i></div>
          <div *ngFor="let image of designService.images" [ngClass]="{'image-like':draggedImage}"   [ngStyle]="image.style" (dragstart)="ModifyDrag($event,'Image')" [draggable]="true">Text</div>
-         <div *ngFor="let list of designService.lists" [ngClass]="{'list-like':draggedlist}"   [ngStyle]="list.style" (dragstart)="ModifyDrag($event,'Data List')" [draggable]="true">Text</div>
+         <div *ngFor="let list of designService.lists" id={{list.id}} (click)="openModal(list.id)" [ngClass]="{'list-like':draggedlist}"   [ngStyle]="list.style" (dragstart)="ModifyDrag($event,'Data List')" (dragend)="UpdateList($event,'Data List',list.InnerHtml)"  [draggable]="true">
+  
+<div  class="add-button"><i  class="bi bi-plus-square-fill"></i></div>
+<div  class="tbl-content">
+  <table cellpadding="0" cellspacing="0" border="0">
+    <thead>
+      <tr>
+        <th *ngFor="let attr of list.attributes">{{attr.name_attribute}}</th>
+      
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let value of list.data">
+              <td *ngFor="let i of list.k">{{value[(list.attributes)[i].name_attribute]}}</td>
+        
+        <td>
+          <i class="bi bi-pencil-square" style="cursor: pointer;font-size:15px"></i>
+          <i class="bi bi-trash" style="cursor: pointer; margin-left: 5px; color:red; font-size:15px"></i>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+  
+  
+ </div>
         </div>
     </main>
   </div>
@@ -156,13 +183,17 @@
   <div *ngIf="typepopup=='Input'" class="popup-header">
     Input
   </div>
+  <div *ngIf="typepopup=='Data List'" class="popup-header">
+    Data List
+  </div>
     <div class="popup-content">
       <label for="input">Click Here To Edit</label>
       <input *ngIf="typepopup=='Input'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="designService.textinput ">
       <input *ngIf="typepopup=='Text'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="designService.textlabel">
       <input *ngIf="typepopup=='Button'" id="input" type="text" class="popup-input" placeholder="..edit me.." [(ngModel)]="designService.textButton">
       <button *ngIf="typepopup=='Button'" class="popup-button">Add Workflow</button>
-      
+    
+     
     </div>
  
 
@@ -178,7 +209,7 @@
     <span id="closeIcon" class="close">&times;</span>
   
    <div class="popup-header">
-    Button
+    Icon
   </div>
    
     <div class=" popup-icon" >
@@ -195,5 +226,45 @@
 </div>
 
 
+<div class="modal " id="myModal">
+  <div class="modal-dialog modal-custom ">
+    <div class="modal-content">
+      <!-- En-tête de la fenêtre modale -->
+      <div class="modal-header">
+        <h4 class="modal-title">View Data</h4>
+        <button
+          type="button"
+          class="close"
+          (click)="closeModal()"
+          data-dismiss="modal"
+        >
+          &times;
+        </button>
+      </div>
 
+      <!-- Corps de la fenêtre modale -->
+      <div class="modal-body">
+       
+       <div class="form-group">
+            <label for="attributeType">Choose The type of Data, you want to load</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="this.designService.textlist"
+                name="this.designService.textlist"
+              [(ngModel)]="this.designService.textlist"
+              >
+              
+                <option  *ngFor="let table of tables" [value]="table.name_entity" >
+                {{table.name_entity}}
+                </option>
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
+      </div>
 
+   
+    </div>
+  </div>
+</div>
