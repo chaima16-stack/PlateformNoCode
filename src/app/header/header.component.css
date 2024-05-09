@@ -3,7 +3,7 @@
   background-color: #1F1F1F;
   color: white;
   font-size: 12px;
-  margin-right: 10px;
+  margin-right: 0px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
   }
@@ -68,51 +68,122 @@
   flex-wrap: nowrap;
   justify-content: flex-start;
 }
+.circle-style{
+  font-size: 18px;
+}
 .dropbtn {
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100%; 
   padding-top: 0px;
-  margin-left: 28px;
+  margin-left: 13px;
   font-size:12px;
   color: black;
   font-weight: 600;
   cursor: pointer;
+  
+}
+.addstyle{
+  margin-right: 23%;
+}
+.dropApp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%; 
+  padding-top: 0px;
+  margin-left: 10px;
+  font-size:12px;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #5d5c5c;
+  border-radius: 5px;
 }
 .dropdown {
   position: relative;
+  float:right;
 }
+.dropdownSetting {
+  position: relative;
+  float:left;
+  margin-right: 7px;
 
+}
 .dropdown-content {
   display: none;
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
   min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+ cursor: pointer;
+
 }
 
 .dropdown-content a {
   font-size: 14px; /* Réduire la taille de la police */
-  color: black;
+  color: rgb(0, 0, 0);
   padding: 10px 16px; /* Ajuster la marge interne */
   text-decoration: none;
   display: block;
+
+}
+.selected-app {
+  padding: 5px 10px;
 }
 
 .dropdown-content a:hover {
-  background-color: #f1f1f1;
+  background-color: #F9F9F9;
 }
 
 .dropdown:hover .dropdown-content {
   display: block;
 }
 
-.dropdown:hover .dropbtn {
-  text-decoration: underline;
+
+
+
+.settingdropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 250px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  margin-top: 7px;
+
+}
+/* Style du titre */
+.dropdown-title {
+  text-align: center;
+  font-weight: bold;
+  padding: 5px;
+}
+
+/* Style de la ligne de séparation */
+.dropdown-divider {
+  height: 1px;
+  background-color: lightgray;
+  margin: 5px 0;
+}
+.settingdropdown-content a {
+  color: rgb(0, 0, 0);
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Style des liens au survol */
+.settingdropdown-content a:hover {
+  background-color: #F9F9F9;
 }
 /* Pour afficher le bouton de basculement sur les écrans de petite taille */
 @media (max-width: 575.98px) {

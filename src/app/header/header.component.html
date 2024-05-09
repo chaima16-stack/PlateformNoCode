@@ -19,24 +19,60 @@
                   <i class="bi bi-database-gear "></i>
 
                     <a class="nav-link" routerLink="/Databases">Database</a>
-                  </li>
-                <li class="nav-item " [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }">
-                <div class="dropdown " style="float:left;">
-                <div class="row">
-                <div class="col-md-6">  <a class="dropbtn "><i class="bi bi-plus-circle-dotted"></i></a></div>
-                
-                </div>
-               
-                  <div class="dropdown-content" style="left:0;">
-                  <a routerLink="/Screen/26/1"><i class="bi bi-plus icons-style"></i>Add a new screen</a>
-                  <a routerLink="/Application"><i class="bi bi-plus icons-style"></i>Add a new Application</a>
-                 </div>
-                 </div>
-                    
-                  </li>
-                
+                </li>
+ 
+                  
+                <li  [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }">
+              <a routerLink="/Screen/{{idActiveApp}}/1" class="dropbtn " ><i title="Add a new Screen to the application" class=" circle-style bi bi-plus-circle-dotted"></i></a>
+
+                     
+               </li>
+ <li class=" dropdown " [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }">
+    <div class="dropdown">
+        <div>
+            <a class="dropApp" title="My Applications" (click)="toggleDropdown()">
+                <div class="selected-app">{{ activeApp }} <i  class="bi bi-caret-down-fill" style="margin-left:10px"></i></div>
+            </a>
+        </div>
+        <div class="dropdown-content" [ngStyle]="{'display': isDropdownOpen ? 'block' : 'none' }">
+            <a *ngFor="let item of app" (click)="setActiveApp(item)">
+              <i style="margin-right:10px;" class="bi bi-window-fullscreen"></i> {{item.name_app}}
+                <i *ngIf="item.name_app === activeApp" class="bi bi-check" style="float:right;"></i>
+            </a>
+             <div class="dropdown-divider"></div>
+             <a routerLink='/Application'>Add a new app...</a>
+        </div>
+    </div>
+</li>
+
+
               </ul>
+     
                 <button [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }"  class="btn preview-btn my-2 my-sm-0" type="submit">Preveiw</button>
             </div>
+   <div class="dropdownSetting">
+    <div>
+        <a class="dropApp"  (click)="toggleDropdownSetting()">
+            <div class="selected-app"><i class="bi bi-gear"></i></div>
+        </a>
+    </div>
+    <div class="settingdropdown-content" [ngStyle]="{'display': isDropdownOpenSetting ? 'block' : 'none' }">
+        <div class="dropdown-title">Settings</div>
+        <div class="dropdown-divider"></div>
+        <a>
+            <i style="margin-right:10px;" class="bi bi-window-stack"></i> My Applications
+        </a>
+        <a>
+            <i style="margin-right:10px;" class="bi bi-sliders2"></i> Application's Settings
+        </a>
+        <a routerLink='/Application'>
+            <i style="margin-right:10px;" class="bi bi-window-plus"></i> Add A New App
+        </a>
+        <a>
+            <i style="margin-right:10px;" class="bi bi-box-arrow-in-left"></i> Log Out
+        </a>
+    </div>
+</div>
+
           </nav>
     </header>
