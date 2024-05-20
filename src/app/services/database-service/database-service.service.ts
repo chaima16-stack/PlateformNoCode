@@ -7,6 +7,10 @@ import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
   providedIn: 'root'
 })
 export class DatabaseServiceService {
+  idTableSlected:any;
+  attributes :any;
+  tables :any;
+  selectedEntity: string = ''; // Variable pour stocker l'entité sélectionnée
 
   constructor(private http: HttpClient) { }
   private apiUrl = 'http://127.0.0.1:8000/';
@@ -105,7 +109,30 @@ ModifyAttribute(id:number,attributename:string,date_update:Date){
 listAttributes(id:number){
   return this.http.get(this.apiUrl+'attributes/'+id)
 }
+AttributesByEntity(){
+  this.AttributeByEntity(this.idTableSlected).subscribe((response)=>{
+    this.attributes= Array.isArray(response) ? response : [response];
+    this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
+   
+  })
+}
 
+refresTables(){
+  const iddb = sessionStorage.getItem('id_db')
+  if(iddb)
+  this.tableListByDatabase(parseInt(iddb,10)).subscribe((response)=>{
+    this.tables = Array.isArray(response) ? response : [response];
+    for(let i=0; i<this.tables.length;i++){
+      if(this.tables[i].name_entity == 'User'){
+        this.idTableSlected = this.tables[i].id
+        break;
+      }
+    }
+    this.AttributesByEntity();
+    this.selectedEntity ='User'
+    
+  })
+}
 //Mongodb 
 Createdb(db_name:string){
   const body={

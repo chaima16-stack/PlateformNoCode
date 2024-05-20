@@ -1,20 +1,20 @@
 
-    <header [ngClass]="{ 'grayed-background ': appCreationService.isCreatingApp }">
-        <nav [ngClass]="{ 'navbar-disable': appCreationService.isCreatingApp }" class="navbar navbar-expand-lg navbar-expand-sm navbar-expand-xs " >
+    <header >
+        <nav  class="navbar navbar-expand-lg navbar-expand-sm navbar-expand-xs " >
 
           
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
-                <li class="nav-item active design-item" [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }"  [ngClass]="{ 'active': activeLink === 'design' }" (click)="setActiveLink('design')">
+                <li class="nav-item active design-item"   [ngClass]="{ 'active':  designService.activeLink === 'design' }" (click)="setActiveLink('design')">
                   
                   <i class="bi bi-wrench-adjustable"></i>
-                  <a class="nav-link"  routerLink="/Design">Design <span class="sr-only">(current)</span></a>
+                  <a class="nav-link"  routerLink="/Design">Design </a>
                 </li>
-                <li class="nav-item " [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }" [ngClass]="{ 'active': activeLink === 'Workflow' }" (click)="setActiveLink('Workflow')" >
+                <li class="nav-item "  [ngClass]="{ 'active': designService.activeLink=== 'Workflow' }" (click)="setActiveLink('Workflow')" >
                   <i class="bi bi-diagram-2-fill"></i>
                   <a class="nav-link" href="#">Workflow</a>
                 </li>
-                <li class="nav-item " [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }" [ngClass]="{ 'active': activeLink === 'Database' }" (click)="setActiveLink('Database')">
+                <li class="nav-item "  [ngClass]="{ 'active':  designService.activeLink === 'Database' }" (click)="setActiveLink('Database')">
                   
                   <i class="bi bi-database-gear "></i>
 
@@ -22,22 +22,22 @@
                 </li>
  
                   
-                <li  [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }">
-              <a routerLink="/Screen/{{idActiveApp}}/1" class="dropbtn " ><i title="Add a new Screen to the application" class=" circle-style bi bi-plus-circle-dotted"></i></a>
+                <li  *ngIf=" designService.activeLink === 'design' ">
+              <a routerLink="/Screen/1" class="dropbtn " ><i title="Add a new Screen to the application" class=" circle-style bi bi-plus-circle-dotted"></i></a>
 
                      
                </li>
- <li class=" dropdown " [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }">
+ <li *ngIf=" designService.activeLink === 'design'" class=" dropdown " >
     <div class="dropdown">
         <div>
             <a class="dropApp" title="My Applications" (click)="toggleDropdown()">
-                <div class="selected-app">{{ activeApp }} <i  class="bi bi-caret-down-fill" style="margin-left:10px"></i></div>
+                <div class="selected-app">{{ designService.activeApp }} <i  class="bi bi-caret-down-fill" style="margin-left:10px"></i></div>
             </a>
         </div>
         <div class="dropdown-content" [ngStyle]="{'display': isDropdownOpen ? 'block' : 'none' }">
             <a *ngFor="let item of app" (click)="setActiveApp(item)">
               <i style="margin-right:10px;" class="bi bi-window-fullscreen"></i> {{item.name_app}}
-                <i *ngIf="item.name_app === activeApp" class="bi bi-check" style="float:right;"></i>
+                <i *ngIf="item.name_app === designService.activeApp" class="bi bi-check" style="float:right;"></i>
             </a>
              <div class="dropdown-divider"></div>
              <a routerLink='/Application'>Add a new app...</a>
@@ -48,7 +48,7 @@
 
               </ul>
      
-                <button [ngClass]="{ 'btn-disable': appCreationService.isCreatingApp }"  class="btn preview-btn my-2 my-sm-0" type="submit">Preveiw</button>
+                <button   class="btn preview-btn my-2 my-sm-0" type="submit">Preveiw</button>
             </div>
    <div class="dropdownSetting">
     <div>
@@ -68,7 +68,7 @@
         <a routerLink='/Application'>
             <i style="margin-right:10px;" class="bi bi-window-plus"></i> Add A New App
         </a>
-        <a>
+        <a (click)="SignOut()">
             <i style="margin-right:10px;" class="bi bi-box-arrow-in-left"></i> Log Out
         </a>
     </div>

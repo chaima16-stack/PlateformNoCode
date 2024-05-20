@@ -4,8 +4,8 @@
     <ul class="entity-list">
       <h6>Entities</h6>
       <div
-        *ngFor="let entity of tables"
-        [ngClass]="{ active: selectedEntity === entity.name_entity }"
+        *ngFor="let entity of dbservice.tables"
+        [ngClass]="{ active: dbservice.selectedEntity === entity.name_entity }"
       >
         <div class="divider"></div>
 
@@ -55,7 +55,7 @@
         value="User"
         placeholder="User"
         name="selectedEntity"
-        [(ngModel)]="selectedEntity"
+        [(ngModel)]="dbservice.selectedEntity"
         required
       />
       <i
@@ -67,7 +67,7 @@
     <div class="divider1"></div>
 
     <div class="attribute-list">
-      <div *ngFor="let attr of attributes" class="attribute row">
+      <div *ngFor="let attr of dbservice.attributes" class="attribute row">
         <div class="col-md-4 col-sm-4 col-lg-4 col-4">
           <span>{{ attr.name_attribute }}</span>
         </div>
@@ -239,7 +239,7 @@
         <table class="table">
           <thead class="table-header">
             <tr>
-              <td *ngFor="let attr of attributes">{{attr.name_attribute}}</td>
+              <td *ngFor="let attr of dbservice.attributes">{{attr.name_attribute}}</td>
               <td></td>
             
             </tr>
@@ -247,7 +247,7 @@
           <tbody>
     
             <tr *ngFor="let value of data">
-              <td *ngFor="let i of index">{{value[attributes[i].name_attribute]}}</td>
+              <td *ngFor="let i of index">{{value[dbservice.attributes[i].name_attribute]}}</td>
               
               <td><i  (click)="ModifyData(value.id)"
             class="bi bi-pencil-square"
@@ -307,7 +307,7 @@
           (ngSubmit)="SubmitFormData()"
           #attributeForm="ngForm"
         >
-          <div *ngFor="let attr of attributes" class="form-group">
+          <div *ngFor="let attr of dbservice.attributes" class="form-group">
 
             <label  *ngIf="attr.name_attribute!='Date_creation' && attr.name_attribute!='Date_update'"  >{{attr.name_attribute}}</label>
             <input  *ngIf="attr.name_attribute!='Date_creation'  && attr.name_attribute!='Date_update' && formData == 'insert' " 
