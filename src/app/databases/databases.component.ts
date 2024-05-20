@@ -14,10 +14,6 @@ export class DatabasesComponent implements OnInit  {
   islistField=false;
   isRequiredField=false;
   entityName ="";
-  tables :any;
-  idTableSlected:any;
-  attributes :any;
-  selectedEntity: string = ''; // Variable pour stocker l'entité sélectionnée
   idattributeselected:any;
   typeform='insert';
   databaseconnected='';
@@ -25,33 +21,17 @@ export class DatabasesComponent implements OnInit  {
   data:any;
   formData='insert'
   iddataselected:any;
-constructor(private dbservice:DatabaseServiceService, private http: HttpClient){}
+constructor(public dbservice:DatabaseServiceService, private http: HttpClient){}
 ngOnInit(): void {
   this.loadAttributeTypes();
-  this.dbservice.getDataBase(17).subscribe((data:any)=>{
-     this.databaseconnected = data.name_db
-  })
+  this.databaseconnected=sessionStorage.getItem('dbconnected') || '';
+  this.dbservice.refresTables()
+}
 
-  this.refresTables()
-}
-refresTables(){
-  this.dbservice.tableListByDatabase(17).subscribe((response)=>{
-    this.tables = Array.isArray(response) ? response : [response];
-    for(let i=0; i<this.tables.length;i++){
-      if(this.tables[i].name_entity == 'User'){
-        this.idTableSlected = this.tables[i].id
-        break;
-      }
-    }
-    this.AttributesByEntity();
-    this.selectedEntity ='User'
-    
-  })
-}
   selectEntity(entity: any) {
-    this.selectedEntity = entity.name_entity; 
-    this.idTableSlected = entity.id;
-    this.AttributesByEntity();
+    this.dbservice.selectedEntity = entity.name_entity; 
+    this.dbservice.idTableSlected = entity.id;
+    this.dbservice.AttributesByEntity();
   }
   openModal() {
     $('#myModal').modal('show'); 
@@ -70,33 +50,32 @@ refresTables(){
     });
   }
 AddEntity(){
-  this.dbservice.addTable(this.entityName,17,new Date()).subscribe();
+  const iddb = sessionStorage.getItem('id_db')
+  if(iddb){
+  this.dbservice.addTable(this.entityName,parseInt(iddb,10),new Date()).subscribe();
   this.dbservice.InsertCollection(this.databaseconnected,this.entityName).subscribe()
   this.TableByDatabase()
   this.entityName=""
+  }
 }
 AddAttribute(){
   const required = this.isRequiredField ? 'O': 'N';
   const listfield = this.islistField ? 'O' : 'N';
-  this.dbservice.addNewAttribute(this.databaseconnected,this.selectedEntity,this.attributeName).subscribe()
-  this.dbservice.addAttribute(this.attributeName,this.selectedAttributeType,listfield,required,this.idTableSlected,new Date()).subscribe()
-  this.AttributesByEntity()
+  this.dbservice.addNewAttribute(this.databaseconnected,this.dbservice.selectedEntity,this.attributeName).subscribe()
+  this.dbservice.addAttribute(this.attributeName,this.selectedAttributeType,listfield,required,this.dbservice.idTableSlected,new Date()).subscribe()
+  this.dbservice.AttributesByEntity()
   this.closeModal()
 }
 
 TableByDatabase(){
- this.dbservice.tableListByDatabase(17).subscribe((response)=>{
-   this.tables = Array.isArray(response) ? response : [response];
+  const iddb = sessionStorage.getItem('id_db')
+  if(iddb)
+ this.dbservice.tableListByDatabase(parseInt(iddb,10)).subscribe((response)=>{
+   this.dbservice.tables = Array.isArray(response) ? response : [response];
    
  })
 }
-AttributesByEntity(){
-  this.dbservice.AttributeByEntity(this.idTableSlected).subscribe((response)=>{
-    this.attributes= Array.isArray(response) ? response : [response];
-    this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
-   
-  })
-}
+
 refresh(){
   this.attributeName="";
   this.selectedAttributeType=""
@@ -108,15 +87,15 @@ deleteEntity(id:any){
   this.dbservice.deleteTable(id).subscribe();
   this.dbservice.getEntityById(id).subscribe((response:any)=>{
       this.dbservice.deleteCollection(this.databaseconnected,response.name_entity).subscribe(()=>{
-      this.refresTables()
+      this.dbservice.refresTables()
       });
   })
 
 }
 deleteAttribute(attribut:any){
-  this.dbservice.deleteAttributefromCollection(this.databaseconnected,this.selectedEntity,attribut.name_attribute).subscribe()
+  this.dbservice.deleteAttributefromCollection(this.databaseconnected,this.dbservice.selectedEntity,attribut.name_attribute).subscribe()
   this.dbservice.deleteAttribute(attribut.id).subscribe(()=>{
-    this.AttributesByEntity();
+    this.dbservice.AttributesByEntity();
   });
  
 }
@@ -129,17 +108,17 @@ submitForm(){
   this.typeform='insert'
 }
 ModifyName(){ 
-  this.dbservice.getEntityById(this.idTableSlected).subscribe((data:any)=>{
-    this.dbservice.UpdateNameCollection(this.databaseconnected,this.selectedEntity,data.name_entity).subscribe()
+  this.dbservice.getEntityById(this.dbservice.idTableSlected).subscribe((data:any)=>{
+    this.dbservice.UpdateNameCollection(this.databaseconnected,this.dbservice.selectedEntity,data.name_entity).subscribe()
 })
-  this.dbservice.ModifyTableName(this.idTableSlected,this.selectedEntity).subscribe(()=>{
-      this.TableByDatabase();
+  this.dbservice.ModifyTableName(this.dbservice.idTableSlected,this.dbservice.selectedEntity).subscribe(()=>{
+      this.TableByDatabase()
   })
 }
 ModifyAttribute(){
- this.dbservice.updateAttibuteInCollection(this.databaseconnected,this.selectedEntity,this.attributeselected,this.attributeName).subscribe()
+ this.dbservice.updateAttibuteInCollection(this.databaseconnected,this.dbservice.selectedEntity,this.attributeselected,this.attributeName).subscribe()
   this.dbservice.ModifyAttribute(this.idattributeselected,this.attributeName,new Date()).subscribe(()=>{
-    this.AttributesByEntity()
+    this.dbservice.AttributesByEntity()
     this.closeModal()
   })
 }
@@ -164,7 +143,7 @@ closeModalAdd() {
 
 }
 openModalData() {
-  console.log(this.attributes)
+  
   $('#myModalData').modal('show'); 
   this.getData()
 
@@ -172,8 +151,8 @@ openModalData() {
 closeModalData() {
   this.refresh()
   this.formData='insert'
-  for (let i=0; i<this.attributes.length;i++){
-    this.attributes[i].value = ""
+  for (let i=0; i<this.dbservice.attributes.length;i++){
+    this.dbservice.attributes[i].value = ""
   }
   $('#myModalData').modal('hide'); 
   
@@ -183,29 +162,29 @@ generateArray(n:number): number[] {
 }
 index:any
 getData(){
-  this.dbservice.getData(this.databaseconnected,this.selectedEntity).subscribe((response:any)=>{
+  this.dbservice.getData(this.databaseconnected,this.dbservice.selectedEntity).subscribe((response:any)=>{
       this.data= Array.isArray(response.result) ? response.result : [response.result];
-      this.index=this.generateArray(this.attributes.length)
+      this.index=this.generateArray(this.dbservice.attributes.length)
       
   })
 }
 AddData(){
   let body: Record<string, any> = {};
-  for (let i=0;i<this.attributes.length;i++){
-     body[this.attributes[i].name_attribute]=this.attributes[i].value
+  for (let i=0;i<this.dbservice.attributes.length;i++){
+     body[this.dbservice.attributes[i].name_attribute]=this.dbservice.attributes[i].value
 
   }
   body['Date_creation']= new Date().toISOString().slice(0, 19).replace('T', ' ');
   body['Date_update'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
-this.dbservice.insertData(this.databaseconnected,this.selectedEntity,body).subscribe()
+this.dbservice.insertData(this.databaseconnected,this.dbservice.selectedEntity,body).subscribe()
 this.closeModalData()
 }
 ModifyData(id:string){
   this.formData='update'
   this.idattributeselected= id
-  this.dbservice.getDocumentById(this.databaseconnected,this.selectedEntity,id).subscribe((response:any)=>{
-    for (let i=0; i<this.attributes.length;i++){
-      this.attributes[i].value = response.result[this.attributes[i].name_attribute]
+  this.dbservice.getDocumentById(this.databaseconnected,this.dbservice.selectedEntity,id).subscribe((response:any)=>{
+    for (let i=0; i<this.dbservice.attributes.length;i++){
+      this.dbservice.attributes[i].value = response.result[this.dbservice.attributes[i].name_attribute]
     }
   })
   this.closeModalAdd()
@@ -219,20 +198,20 @@ SubmitFormData(){
 }
 ModifynewData(){
   let body: Record<string, any> = {};
-  for (let i=0; i<this.attributes.length;i++){
-    let data = document.getElementById(this.attributes[i].name_attribute) as HTMLInputElement
+  for (let i=0; i<this.dbservice.attributes.length;i++){
+    let data = document.getElementById(this.dbservice.attributes[i].name_attribute) as HTMLInputElement
     if(data)
-      body[this.attributes[i].name_attribute] = data.value
+      body[this.dbservice.attributes[i].name_attribute] = data.value
     
   }
   body['Date_update']=new Date().toISOString().slice(0, 19).replace('T', ' '); 
-  this.dbservice.update_data(this.databaseconnected,this.selectedEntity,body,this.idattributeselected).subscribe()
+  this.dbservice.update_data(this.databaseconnected,this.dbservice.selectedEntity,body,this.idattributeselected).subscribe()
 
   this.closeModalData()
   this.openModalAdd()
 }
 DeleteData(id:string){
-  this.dbservice.deleteData(this.databaseconnected,this.selectedEntity,id).subscribe();
+  this.dbservice.deleteData(this.databaseconnected,this.dbservice.selectedEntity,id).subscribe();
   this.getData()
 }
 }

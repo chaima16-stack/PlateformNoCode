@@ -17,15 +17,15 @@ export class AppCreationServiceService {
   private apiUrl = 'http://127.0.0.1:8000/';
 
   
-  addApp(name: string, description: string, databaseName: string, date_creation: Date): Observable<any> {
-    // Appel addDatabase pour ajouter la base de données
+  addApp(id_user:number,name: string, description: string, databaseName: string, date_creation: Date): Observable<any> {
+    // Appel addDatabase pour ajouter la base de données puisque le formulaire contient aussi l'ajout de db
     return this.dbservice.addDatabase(databaseName, date_creation).pipe(
       switchMap(response => {
         let id_db = response;
         const body = {
           name: name,
           description: description,
-          user: 2,
+          user: id_user,
           database: id_db,
           date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
           date_update: date_creation.toISOString().slice(0, 10)

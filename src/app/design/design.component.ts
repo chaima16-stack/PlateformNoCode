@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { AppCreationServiceService } from '../services/app-service/app-creation-service.service';
 import { DatabaseServiceService } from '../services/database-service/database-service.service';
+import { AuthService } from '../services/auth-service/auth.service';
 declare var $: any;
 @Component({
   selector: 'app-design',
@@ -24,7 +25,6 @@ export class DesignComponent implements OnInit {
   testdropped=false // pour tester s'il s'agit des élement dropped
   data:any
   k:any
-  tables:any
   attributes:any
   items = [
     { name: 'Elements Tree',subItems: [], showSubItems: false },
@@ -36,52 +36,43 @@ export class DesignComponent implements OnInit {
   numberOfScreens: number=0;
   description: string ='';
   app:any // apps by user connected
-  itemsTaken :any //screens by app
   idscreen:any
   databaseconnected=""
-  constructor(private dbservice:DatabaseServiceService ,public appService: AppCreationServiceService,public designService:DesignServiceService,private route: ActivatedRoute,private router: Router){}
+  idUserconnected :any
+  constructor(private authservice:AuthService,private dbservice:DatabaseServiceService ,public appService: AppCreationServiceService,public designService:DesignServiceService,private route: ActivatedRoute,private router: Router){}
  
   ngOnInit(): void {
     //liste des apps d'user connecté 
     this.refreshListApp();
-    this.dbservice.getDataBase(17).subscribe((data:any)=>{
-      this.databaseconnected = data.name_db
-   })
-   this.TableByDatabase();
+    this.databaseconnected=sessionStorage.getItem('dbconnected') || '';
+    this.designService.getScreenByApp()
   }
 refreshListApp(){
-  this.appService.getAppByUser(2).subscribe((response)=>{
-    const appsArray = Array.isArray(response) ? response : [response];
-    this.app=appsArray.map(app=>({
-      date_creation: app.date_creation,
-      date_update: app.date_update,
-      description: app.description,
-      id_app: app.id_app,
-      name_app: app.name,
-      user: app.user,
-      showSubItems: false
-    }))
-  });
-}
-getScreenByApp(appitem:any){
-   this.appService.getScreensByApp(appitem.id_app).subscribe(response=>{
-    const screensArray = Array.isArray(response) ? response : [response];
-      this.itemsTaken = screensArray.map(screen => ({
-        app: screen.app,
-        date_creation: screen.date_creation,
-        date_update: screen.date_update,
-        id_screen: screen.id_screen,
-        name_screen: screen.name_screen,
-        type_screen: screen.type_screen,
+  let token = sessionStorage.getItem("loggedInUser");
+  this.authservice.decodeToken(token).subscribe((response:any)=>{
+    this.appService.getAppByUser(parseInt(response.user_id,10)).subscribe((response)=>{
+      const appsArray = Array.isArray(response) ? response : [response];
+      this.app=appsArray.map(app=>({
+        date_creation: app.date_creation,
+        date_update: app.date_update,
+        description: app.description,
+        id_app: app.id_app,
+        name_app: app.name,
+        user: app.user,
         showSubItems: false
-      }));})
-   this.toggleSubItems(appitem)
-   for(let i=0;i<this.app.length;i++){
-    if(this.app[i]!=appitem && this.app[i].showSubItems){
-      this.toggleSubItems(this.app[i])
-    }
-   }
+      }))
+    });
+ 
+  })
 }
+TableByDatabase(){
+  const iddb = sessionStorage.getItem('id_db')
+  if(iddb)
+  this.dbservice.tableListByDatabase(parseInt(iddb,10)).subscribe((response)=>{
+    this.designService.tables = Array.isArray(response) ? response : [response];
+    
+  })
+ }
 getElement(item:any){
     this.designService.buttons=[]
     this.designService.inputs=[]
@@ -89,6 +80,7 @@ getElement(item:any){
     this.designService.icons=[]
     this.designService.lists=[]
     this.designService.listItem=[]
+   
     this.appService.getElmentByScreen(item.id_screen).subscribe((response) => {
       const elementsArray = Array.isArray(response) ? response : [response];
       for (let i = 0; i < elementsArray.length; i++) {
@@ -108,7 +100,9 @@ getElement(item:any){
           case 'Text':this.designService.texts.push(element);break;
           case 'Icon': this.designService.icons.push(element);break;
           case 'Data List': 
-          this.appService.getIdEntityByDatabase(17,elementsArray[i].label).subscribe((data:any)=>{
+          const iddb = sessionStorage.getItem('id_db')
+          if(iddb)
+          this.appService.getIdEntityByDatabase(parseInt(iddb,10),elementsArray[i].label).subscribe((data:any)=>{
             this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
               this.attributes= Array.isArray(response) ? response : [response];
               
@@ -145,9 +139,9 @@ getElement(item:any){
   
     this.toggleSubItems(item)
     this.idscreen=item.id_screen
-   for(let i=0;i<this.itemsTaken.length;i++){
-    if(this.itemsTaken[i]!=item && this.itemsTaken[i].showSubItems){
-      this.toggleSubItems(this.itemsTaken[i])
+   for(let i=0;i<this.designService.itemsTaken.length;i++){
+    if(this.designService.itemsTaken[i]!=item && this.designService.itemsTaken[i].showSubItems){
+      this.toggleSubItems(this.designService.itemsTaken[i])
     }
    }
   
@@ -176,6 +170,7 @@ deleteScreen(appitem:any){
 
 toggleSubItems(item:any): void {
     item.showSubItems = !item.showSubItems;
+    this.TableByDatabase()
   }
 
 
@@ -319,7 +314,9 @@ UpdateList(event:any,type:any,table:any){
           this.designService.delete(list,this.designService.lists)
           this.designService.lists[this.designService.lists.length-1].id=list.id
           this.designService.lists[this.designService.lists.length-1].InnerHtml=table
-          this.appService.getIdEntityByDatabase(17,table).subscribe((data:any)=>{
+          const iddb = sessionStorage.getItem('id_db')
+          if(iddb)
+          this.appService.getIdEntityByDatabase(parseInt(iddb,10),table).subscribe((data:any)=>{
             this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
               this.attributes= Array.isArray(response) ? response : [response];
               
@@ -595,12 +592,7 @@ generateArray(n:number): number[] {
     }
 
 
-TableByDatabase(){
-  this.dbservice.tableListByDatabase(17).subscribe((response)=>{
-    this.tables = Array.isArray(response) ? response : [response];
-    
-  })
- }
+
 
 
 idlist:any;
@@ -616,7 +608,9 @@ closeModal() {
  
   this.designService.lists[this.index].InnerHtml = this.designService.textlist
   this.appService.ModifiyLabel(this.designService.textlist,this.designService.lists[this.index].id).subscribe();
-  this.appService.getIdEntityByDatabase(17,this.designService.textlist).subscribe((data:any)=>{
+  const iddb = sessionStorage.getItem('id_db')
+  if(iddb)
+  this.appService.getIdEntityByDatabase(parseInt(iddb,10),this.designService.textlist).subscribe((data:any)=>{
     this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
       this.attributes= Array.isArray(response) ? response : [response];
       
