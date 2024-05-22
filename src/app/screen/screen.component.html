@@ -2,7 +2,7 @@
 
  <div id="popupContainer">
         <div lass="container mt-5 overlay" id="popupForm">
-            <span class="closeBtn" onclick="closePopup()">&times;</span>
+        
             <div class="row d-flex justify-content-center ">
               <div class="col-md-8">
           <form id="regForm" (ngSubmit)="submitForm()" #appForm="ngForm">
@@ -17,7 +17,8 @@
                   <h6>Type of screen</h6>
                   <select class="form-select" [(ngModel)]="screenType" name="screenType" required>
                       <option value="">Choose...</option>
-                      <option value="Authtenfication">Authtenfication</option>
+                      <option value="Authtenfication">Authtenfication Page</option>
+                      <option value="Authtenfication">Sign up Page</option>
                       <option value="CRUD page">CRUD page</option>
                   </select>
                   <br>

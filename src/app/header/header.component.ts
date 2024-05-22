@@ -75,6 +75,7 @@ ngOnInit(): void {
     }
   }
   SignOut(){
+    sessionStorage.removeItem('settings')
     sessionStorage.removeItem("loggedInUser")
     sessionStorage.removeItem("dbconnected")
     sessionStorage.removeItem('app')

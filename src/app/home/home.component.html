@@ -1,0 +1,92 @@
+<!-- home.component.html -->
+<div class="container-fluid p-0">
+  <!-- Barre horizontale -->
+  <nav class="navbar navbar-light navbar-custom shadow-sm">
+    <div class="container justify-content-center align-items-center">
+      <img class="logo" src="..\assets\images\logo.png" />
+    </div>
+  </nav>
+
+  <div class="d-flex">
+    <!-- Barre verticale -->
+    <div class="sidebar flex-shrink-0 p-3">
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item setting" >
+          <a routerLink="/Home " class="nav-link">
+            
+            <i
+              style="margin-right: 10px; font-size: 25px"
+              class="bi bi-window-stack"
+            ></i>
+            My Apps
+          </a>
+        </li>
+        <li>
+          <a routerLink="/Settings" class="nav-link link-dark">
+           
+            <i
+              style="margin-right: 10px; font-size: 25px"
+              class="bi bi-sliders2"
+            ></i>
+            Application's Settings
+          </a>
+        </li>
+        <li>
+          <a style=" cursor: pointer;" (click)="SignOut()" class="nav-link link-dark">
+            
+            <i
+              style="margin-right: 10px; font-size: 25px"
+              class="bi bi-box-arrow-in-left"
+            ></i>
+            Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="content">
+      <!-- Section principale -->
+      <div class="main mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="h4">
+            <i
+              class="bi bi-columns-gap"
+              style="margin-right: 10px; font-size: 25px"
+            ></i>
+            Apps
+          </h1>
+          <button class="submit-button" routerLink="/Application">
+            Add a new App
+          </button>
+        </div>
+        <hr class="my-4" />
+
+        <!-- Cadres -->
+        <div class="row">
+          <div class="col-lg-4 col-sm-6 mb-4 carre" *ngFor="let item of app">
+            <div class="position-relative h-100 custom-rounded">
+              <a
+                (click)="openApp(item)"
+                class="d-flex flex-column px-3 py-4 bg-white shadow text-center d-block h-100 custom-rounded"
+              >
+                <i class="ti-panel icon text-primary d-block mb-3"></i>
+                <h5 class="mb-2 mt-0">
+                  <i class="bi bi-window-fullscreen"></i> {{ item.name_app }}
+                </h5>
+                <div class="flex-grow-1">
+                  <p class="mb-0 description">Description : {{ item.description }}</p>
+                  <div class="d-flex justify-content-between text-muted mt-1">
+                    <span class="date">Date of creation: {{ item.date_creation }}</span>
+                    <span class="date">Date of last update: {{ item.date_update }}</span>
+                  </div>
+                </div>
+              </a>
+              <i (click)="deleteApp(item.id_app)" class="bi bi-trash position-absolute top-0 end-0 m-2"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

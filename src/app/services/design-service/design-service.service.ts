@@ -42,13 +42,7 @@ export class DesignServiceService {
           type_screen: screen.type_screen,
           showSubItems: false
         }));})
-  /*    this.toggleSubItems(appitem)
-     for(let i=0;i<this.app.length;i++){
-      if(this.app[i]!=appitem && this.app[i].showSubItems){
-        this.toggleSubItems(this.app[i])
-      } */
      
-    
   }
 delete(element:any,liste:any){
   for(let i=0;i<liste.length;i++){
