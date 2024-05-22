@@ -133,6 +133,12 @@ refresTables(){
     
   })
 }
+updatedbName(id:number,newName:string,date_update:Date){
+  return this.http.patch(this.apiUrl+ 'databases/'+id +'/', {"name_db":newName,  date_update: date_update.toISOString().slice(0, 10)}) .pipe(
+    catchError(this.handleError) 
+  );
+}
+
 //Mongodb 
 Createdb(db_name:string){
   const body={

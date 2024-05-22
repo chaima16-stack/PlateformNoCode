@@ -25,6 +25,7 @@ export class ScreenComponent {
 
   submitForm() {
     const id_app= sessionStorage.getItem('idappcreated')
+    const app= sessionStorage.getItem('app')
     if(id_app)
     this.appService.addScreen(this.screenName,this.screenType,parseInt(id_app,10),new Date())
     .subscribe(() => {
@@ -32,12 +33,30 @@ export class ScreenComponent {
         this.screenType = '';
         this.numberscreen--;
         if(this.numberscreen==0){
-          this.router.navigate(['/Design/']);
+          this.router.navigate(['/Home/']);
           sessionStorage.removeItem('idappcreated')
       }
         else
           this.router.navigate(['/Screen/'+this.numberscreen]);
 
-      }, );  
+      }, ); 
+      else if(app){
+        this.appService.addScreen(this.screenName,this.screenType,parseInt(app,10),new Date())
+        .subscribe(() => {
+            this.screenName = '';
+            this.screenType = '';
+            this.numberscreen--;
+            if(this.numberscreen==0){
+              let setting = sessionStorage.getItem('settings')
+            if(!setting)
+              this.router.navigate(['/Design/']);
+            else this.router.navigate(['/Settings/']);
+              
+          }
+            else
+              this.router.navigate(['/Screen/'+this.numberscreen]);
+    
+          }, ); 
+      } 
   }
 }

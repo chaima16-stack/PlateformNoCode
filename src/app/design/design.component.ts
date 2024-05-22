@@ -46,6 +46,8 @@ export class DesignComponent implements OnInit {
     this.refreshListApp();
     this.databaseconnected=sessionStorage.getItem('dbconnected') || '';
     this.designService.getScreenByApp()
+    sessionStorage.removeItem('settings')
+
   }
 refreshListApp(){
   let token = sessionStorage.getItem("loggedInUser");

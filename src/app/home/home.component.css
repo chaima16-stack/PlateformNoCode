@@ -1,0 +1,106 @@
+/* home.component.css */
+.container-fluid {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: #F2F5F9;
+  
+}
+
+.navbar-custom {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    height: 100px !important; /* Définissez la hauteur en pixels */
+}
+
+.h4 {
+    font-weight: bolder;
+}
+
+.logo {
+    height: 30px;
+}
+
+.carre {
+    cursor: pointer;
+}
+
+.custom-rounded {
+    border-radius: 20px; /* Ajustez cette valeur selon vos préférences */
+}
+
+.sidebar {
+    background-color: #F2F5F9;
+    width: 320px;
+    top: 0; /* Position le sidebar en haut de la fenêtre */
+    left: 0; /* Position le sidebar à gauche de la fenêtre */
+    bottom: 0; /* Étend le sidebar jusqu'en bas de la fenêtre */
+    padding-top: 20px;
+    height: 100%;
+}
+
+.nav {
+    padding-top: 50px;
+}
+
+.sidebar a {
+    padding: 20px;
+    display: block;
+    color: #333;
+    font-weight: bold;
+}
+
+.content {
+    flex: 1;
+    background-color: #fff;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center; /* Centre le contenu horizontalement */
+    align-items: center; /* Centre le contenu verticalement */
+    min-height: 110vh;
+    margin-top: -150px;
+}
+
+.setting{
+    background-color:black; 
+    margin-left:-20px;
+    margin-right: -20px;
+}
+.sidebar .setting a {
+    color: white;
+}
+.description{
+    font-size: small;
+}
+.date{
+    font-size: x-small;
+    color: #FCAA7E;
+}
+.main {
+    width: 100%; /* Définissez la largeur du contenu principal selon vos besoins */
+    padding: 70px;
+  
+}
+
+.card-custom {
+    background-color: #f8f9fa;
+    padding: 20px;
+    margin: 10px 0;
+}
+
+.submit-button {
+    background-color: white;
+    font-weight: bold;
+    border: 2px solid rgb(61, 60, 60); /* Contour noir */
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+.submit-button:hover {
+    color: white;
+    background-color: rgb(41, 40, 40);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}

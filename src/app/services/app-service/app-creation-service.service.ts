@@ -132,4 +132,15 @@ getIdEntityByDatabase(iddb:number,entityName:string){
   .set('name_entity',entityName.toString());
   return this.http.get(this.apiUrl+'entitiesByDatabase/',{params})
 }
+updateScreenName(id:number,new_screen_name:string, date_update:Date){
+  return this.http.patch(this.apiUrl+ 'screens/'+id +'/', {"name_screen":new_screen_name,  date_update: date_update.toISOString().slice(0, 10)}) .pipe(
+    catchError(this.handleError) 
+  );
+}
+
+updateAppName(id:number,newName:string,date_update:Date){
+  return this.http.patch(this.apiUrl+ 'apps/'+id +'/', {"name":newName,  date_update: date_update.toISOString().slice(0, 10)}) .pipe(
+    catchError(this.handleError) 
+  );
+}
 }

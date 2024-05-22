@@ -11,6 +11,8 @@ import { ApplicationComponent } from './application/application.component';
 import { ScreenComponent } from './screen/screen.component';
 import { DatabasesComponent } from './databases/databases.component';
 import { AuthentificationComponent } from './authentification/authentification.component';
+import { HomeComponent } from './home/home.component';
+import { SettingsComponent } from './settings/settings.component';
 
 
 
@@ -24,6 +26,8 @@ import { AuthentificationComponent } from './authentification/authentification.c
     ScreenComponent,
     DatabasesComponent,
     AuthentificationComponent,
+    HomeComponent,
+    SettingsComponent,
 
 
    
