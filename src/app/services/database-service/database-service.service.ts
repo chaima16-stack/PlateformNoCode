@@ -43,6 +43,7 @@ addTable(tablename:string, db:number, date_creation :Date): Observable<any>{
 }
 
 addAttribute(attributename:string, type_attribute:string,listfield:string,required:string,entityid:number,date_creation:Date): Observable<any>{
+  
   const body ={
   name_attribute: attributename,
   type_attribute: type_attribute,
@@ -113,7 +114,7 @@ AttributesByEntity(){
   this.AttributeByEntity(this.idTableSlected).subscribe((response)=>{
     this.attributes= Array.isArray(response) ? response : [response];
     this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
-   
+
   })
 }
 

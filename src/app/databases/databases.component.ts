@@ -47,6 +47,7 @@ ngOnInit(): void {
       const lines = data.split('\n');
       // Ajouter chaque type d'attribut à la liste
       this.attributeTypes = lines.filter(line => line.trim() !== '');
+      
     });
   }
 AddEntity(){
@@ -146,10 +147,24 @@ openModalData() {
   
   $('#myModalData').modal('show'); 
   this.getData()
-
+  for (let i=0; i<this.dbservice.attributes.length;i++){   
+    if(this.dbservice.attributes[i].listField=='O'){
+      this.dbservice.getData(this.databaseconnected,this.dbservice.attributes[i].type_attribute).subscribe((response:any)=>{
+        const array= response.result.map((item: any) => {
+    
+          let newItem = { ...item };
+          delete newItem.Date_creation;
+          delete newItem.Date_update;
+          return newItem;
+        });
+     this.dbservice.attributes[i].info = array
+      })
+    }
+  }
 }
 closeModalData() {
   this.refresh()
+  this.update=false
   this.formData='insert'
   for (let i=0; i<this.dbservice.attributes.length;i++){
     this.dbservice.attributes[i].value = ""
@@ -168,11 +183,19 @@ getData(){
       
   })
 }
+formatInfo(info: any,insert:boolean): string {
+  if(!insert){
+  const infoCopy = { ...info };
+  delete infoCopy.id;
+  return JSON.stringify(infoCopy);
+}else return JSON.stringify(info);
+  
+}
 AddData(){
   let body: Record<string, any> = {};
   for (let i=0;i<this.dbservice.attributes.length;i++){
      body[this.dbservice.attributes[i].name_attribute]=this.dbservice.attributes[i].value
-
+  
   }
   body['Date_creation']= new Date().toISOString().slice(0, 19).replace('T', ' ');
   body['Date_update'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -183,7 +206,8 @@ ModifyData(id:string){
   this.formData='update'
   this.idattributeselected= id
   this.dbservice.getDocumentById(this.databaseconnected,this.dbservice.selectedEntity,id).subscribe((response:any)=>{
-    for (let i=0; i<this.dbservice.attributes.length;i++){
+    for (let i=0; i<this.dbservice.attributes.length;i++){    
+      console.log(response.result[this.dbservice.attributes[i].name_attribute])
       this.dbservice.attributes[i].value = response.result[this.dbservice.attributes[i].name_attribute]
     }
   })
@@ -200,18 +224,24 @@ ModifynewData(){
   let body: Record<string, any> = {};
   for (let i=0; i<this.dbservice.attributes.length;i++){
     let data = document.getElementById(this.dbservice.attributes[i].name_attribute) as HTMLInputElement
-    if(data)
-      body[this.dbservice.attributes[i].name_attribute] = data.value
-    
+    if(data){
+      if(this.dbservice.attributes[i].listField=='N')
+      body[this.dbservice.attributes[i].name_attribute] = data.value;
+      else body[this.dbservice.attributes[i].name_attribute]=this.dbservice.attributes[i].value
+    }  
   }
   body['Date_update']=new Date().toISOString().slice(0, 19).replace('T', ' '); 
   this.dbservice.update_data(this.databaseconnected,this.dbservice.selectedEntity,body,this.idattributeselected).subscribe()
-
   this.closeModalData()
   this.openModalAdd()
 }
 DeleteData(id:string){
   this.dbservice.deleteData(this.databaseconnected,this.dbservice.selectedEntity,id).subscribe();
   this.getData()
+}
+update=false
+openselect(attr:any){
+  attr.value=""
+  this.update=true
 }
 }

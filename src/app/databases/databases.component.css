@@ -191,6 +191,19 @@ label {
   cursor: pointer;
 }
 
+.update-link {
+ margin-left: 65px;
+ margin-top: -29px;
+  margin-right: 35px;
+}
+
+.update-link .link {
+  color: rgb(0, 13, 255);
+  text-decoration: underline;
+  margin-left: 2px;
+  cursor: pointer;
+}
+
 .additional-links .divider {
   margin: 0 5px;
   font-weight: bold;
