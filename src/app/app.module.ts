@@ -13,6 +13,8 @@ import { DatabasesComponent } from './databases/databases.component';
 import { AuthentificationComponent } from './authentification/authentification.component';
 import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings.component';
+import { WorkflowComponent } from './workflow/workflow.component';
+
 
 
 
@@ -28,6 +30,8 @@ import { SettingsComponent } from './settings/settings.component';
     AuthentificationComponent,
     HomeComponent,
     SettingsComponent,
+    WorkflowComponent,
+
 
 
    

@@ -22,6 +22,7 @@
     "@auth0/angular-jwt": "^5.2.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "bpmn-js": "^17.7.0",
     "jquery": "^3.7.1",
     "jwt-decode": "^4.0.0",
     "popper.js": "^1.16.1",
