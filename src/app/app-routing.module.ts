@@ -9,6 +9,8 @@ import { LoginGuard } from './authentification/login.guard';
 import { AuthGuard } from './authentification/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings.component';
+import { WorkflowComponent } from './workflow/workflow.component';
+
 
 const routes: Routes = [
   {path:'Design', component:DesignComponent, canActivate: [AuthGuard]},
@@ -17,7 +19,9 @@ const routes: Routes = [
   {path:'Databases', component:DatabasesComponent, canActivate: [AuthGuard]},
   {path:'Home', component:HomeComponent, canActivate: [AuthGuard]},
   {path:'Settings', component:SettingsComponent, canActivate: [AuthGuard]},
-  {path:'LogIn', component:AuthentificationComponent,canActivate: [LoginGuard]}
+  {path:'Workflow', component:WorkflowComponent, canActivate: [AuthGuard]},
+  {path:'LogIn', component:AuthentificationComponent,canActivate: [LoginGuard]},
+  
 ];
 
 @NgModule({

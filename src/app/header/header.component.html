@@ -12,7 +12,7 @@
                 </li>
                 <li class="nav-item "  [ngClass]="{ 'active': designService.activeLink=== 'Workflow' }" (click)="setActiveLink('Workflow')" >
                   <i class="bi bi-diagram-2-fill"></i>
-                  <a class="nav-link" href="#">Workflow</a>
+                  <a routerLink="/Workflow" class="nav-link" href="#">Workflow</a>
                 </li>
                 <li class="nav-item "  [ngClass]="{ 'active':  designService.activeLink === 'Database' }" (click)="setActiveLink('Database')">
                   

@@ -96,6 +96,9 @@ AddElementByScreen(screenid: number,elementid:string, Type_element: string, labe
     catchError(this.handleError) // Utilisation de catchError avec la fonction de gestion d'erreur
   );
 }
+getElementById(id:string){
+  return this.http.get(this.apiUrl+'elements/'+id);
+}
 ModifiyLabel(label:string, id:string){
 
   return this.http.patch(this.apiUrl+ 'elements/'+id +'/', {"label":label }) .pipe(

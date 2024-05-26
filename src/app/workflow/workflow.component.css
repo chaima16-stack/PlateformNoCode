@@ -1,0 +1,147 @@
+/* workflow.component.css */
+.container-fluid {
+    background-color: #FAFAFA;
+    min-height: 100%;
+}
+.bi{
+    font-size: 22px;
+    margin-right: 10px;
+}
+.contenu {
+    padding: 20px;
+    flex-grow: 1; /* Pour que le contenu prenne tout l'espace disponible */
+
+}
+.workflow-event {
+    border: 1px solid grey;
+    padding: 3px;
+    margin: 10px 0;
+    margin-right: 10px;
+    text-align: center;
+    background-color: #AFAEAE;
+    color: white;
+    font-weight: bold;
+    position: relative; 
+
+
+}
+.workflow-event .delete-icon {
+  font-size: 12px;
+  color: red;
+  cursor: pointer;
+  margin-right: 5px;
+  float: right; 
+}
+.workflow-event-add {
+    border: 2px dashed grey;
+    padding: 0px;
+    margin: 10px 0;
+
+    margin-right: 10px;
+    padding-top: 10px;
+    text-align: center;
+    background-color: white;
+    font-weight: normal;
+    font-size: small;
+    cursor: pointer;
+    height: 75px;
+}
+.arrow-up-container {
+    position: relative;
+    height: 0;
+}
+.arrow-up {
+    position: absolute;
+    top: -22px;  
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    color: #D9D9D9;
+}
+.arrow-down {
+    font-size: 24px;
+    margin: 10px 0;
+    text-align: center;
+}
+.step-details {
+    border-top: 2px solid #D9D9D9;
+    padding: 10px;
+    margin-right: 10px;
+    background-color: white;
+    margin-bottom: 20px;
+    text-align: left;
+    position: relative; /* Nécessaire pour positionner l'icône de suppression */
+
+}
+.add-action {
+    border: 1px dashed grey;
+    padding: 6px;
+    margin-top: 15px;
+    text-align: center;
+    color: grey;
+    font-weight: normal;
+    font-size: small;
+    cursor: pointer;
+}
+.actiontext{
+    padding-left: 20px;
+}
+.btn {
+    background-color: #000000;
+    color: white;
+    padding: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+    margin-top: 3%;
+    margin-right: 10px;
+    width: 28%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    font-weight: bold;
+    
+  }
+  
+  .btn:hover {
+    background-color: #1c1b1b;
+  }
+  
+  
+  .input-invalid {
+  
+    border:1px solid #ff060666;
+  }
+  .form-group label{
+    margin-bottom: 5px;
+  }
+  .form-group input, select{
+    border: 2px solid #aaaaaa;
+  }
+  .select-with-icon {
+    position: relative;
+  }
+  
+  .select-with-icon select {
+    padding-right: 30px; 
+  }
+  
+  .select-with-icon i {
+    position: absolute; 
+    top: 50%;
+    right: 10px; 
+    transform: translateY(-50%); 
+    pointer-events: none; 
+  }
+  .workflow-event .event{
+    font-weight:lighter;
+    font-size: small;
+    
+  }
+  .delete-icon-action {
+    float: right;
+    font-size: 12px;
+    color: red;
+    cursor: pointer;
+    margin-right: 5px; /* Espacement à droite de l'icône */
+}
+

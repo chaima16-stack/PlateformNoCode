@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DatabaseServiceService } from '../services/database-service/database-service.service';
 import { HttpClient } from '@angular/common/http';
+import { DesignServiceService } from '../services/design-service/design-service.service';
 declare var $: any;
 @Component({
   selector: 'app-databases',
@@ -21,11 +22,12 @@ export class DatabasesComponent implements OnInit  {
   data:any;
   formData='insert'
   iddataselected:any;
-constructor(public dbservice:DatabaseServiceService, private http: HttpClient){}
+constructor(public dbservice:DatabaseServiceService, private http: HttpClient,public designService:DesignServiceService ){}
 ngOnInit(): void {
   this.loadAttributeTypes();
   this.databaseconnected=sessionStorage.getItem('dbconnected') || '';
   this.dbservice.refresTables()
+  this.designService.activeLink = 'Database'
 }
 
   selectEntity(entity: any) {
