@@ -99,5 +99,4 @@ getUniqueRandomId(typeId:any,tab: any) {
 
   return randomId;
 }
-
 }

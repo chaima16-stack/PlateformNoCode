@@ -19,6 +19,9 @@ namedb:any
 screens:any
 olddbname:any
 iddbselected:any
+alertVisible: boolean = false;
+alertMessage: string = '';
+alerts:any
 ngOnInit(): void {
   //liste des apps d'user connecté 
   let token = sessionStorage.getItem("loggedInUser");
@@ -96,13 +99,18 @@ sessionStorage.setItem('app',app.id_app)
 
 }
 updateScreen(screen:any,screenname:any){
-  this.appService.updateScreenName(screen.id_screen, screenname,new Date()).subscribe((response)=>{
-  })
+  this.appService.updateScreenName(screen.id_screen, screenname,new Date()).subscribe()
+  this.alertVisible = true; 
+
+  this.alerts={type:"success",message:'Screen\'s name is updated successfully'}
 }
 updateAppName(){
 this.appService.updateAppName(this.idappselected,this.nameApp,new Date()).subscribe((response:any)=>{
   this.activeApp=response.name
 })
+this.alertVisible = true; 
+
+this.alerts={type:"success",message:'App\'s name is updated successfully'}
 this.refreshListApp()
 }
 refreshListApp(){
@@ -125,19 +133,19 @@ refreshListApp(){
   })
 }
 updatedbName(){
-this.dbservice.updatedbName(this.iddbselected,this.namedb,new Date()).subscribe((response:any)=>{
+this.dbservice.updatedbName(this.iddbselected,this.namedb,new Date()).subscribe()
+this.dbservice.ModifyNamedb(this.olddbname,this.namedb).subscribe()
+this.alertVisible = true; 
 
-  
-})
-this.dbservice.ModifyNamedb(this.olddbname,this.namedb).subscribe((data)=>{
-  
-})
+this.alerts={type:"success",message:'Database\'s name is updated successfully'}
+
 }
 deleteScreen(screen:any){
   this.appService.deleteScreen(screen.id_screen).subscribe((response) => {
     location.reload();
   }, )
-  
+
+
 }
 SignOut(){
   sessionStorage.removeItem("loggedInUser")
@@ -146,5 +154,9 @@ SignOut(){
   sessionStorage.removeItem('id_db')
   sessionStorage.setItem('loggedIn','false')
   this.authservice.SignOut();
+}
+closeAlert() {
+  this.alertVisible = false; 
+
 }
 }

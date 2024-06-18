@@ -14,7 +14,7 @@ export class AuthentificationComponent implements OnInit {
   ngOnInit(): void {
     sessionStorage.setItem('loggedIn','false')
       google.accounts.id.initialize({
-        client_id : '362459692229-g8dpcd2tmfhoeo62eru4icu31f546bh1.apps.googleusercontent.com',
+        client_id : '969719008569-th6d8g5ouaq58fonkkb28e4hb8b6q42c.apps.googleusercontent.com',
         callback: (resp:any)=>{
           console.log(resp)
           this.handleLogin(resp)}
@@ -39,7 +39,7 @@ export class AuthentificationComponent implements OnInit {
           const jwtToken = response.token; // Obtenir le token JWT de la réponse
           sessionStorage.setItem('loggedInUser', jwtToken); // Stocker le token JWT dans le sessionStorage
           sessionStorage.setItem('loggedIn','true')
-          this.router.navigate(['/Design']); // Redirection vers la page Design
+          this.router.navigate(['/Home']); // Redirection vers la page Design
         }
         
       );

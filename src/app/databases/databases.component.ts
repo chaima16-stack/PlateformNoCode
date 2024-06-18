@@ -22,6 +22,12 @@ export class DatabasesComponent implements OnInit  {
   data:any;
   formData='insert'
   iddataselected:any;
+  alertVisible: boolean = false;
+  alertMessage: string = '';
+  alerts:any
+  alertVisible1: boolean = false;
+  alertMessage1: string = '';
+  alerts1:any
 constructor(public dbservice:DatabaseServiceService, private http: HttpClient,public designService:DesignServiceService ){}
 ngOnInit(): void {
   this.loadAttributeTypes();
@@ -67,6 +73,9 @@ AddAttribute(){
   this.dbservice.addNewAttribute(this.databaseconnected,this.dbservice.selectedEntity,this.attributeName).subscribe()
   this.dbservice.addAttribute(this.attributeName,this.selectedAttributeType,listfield,required,this.dbservice.idTableSlected,new Date()).subscribe()
   this.dbservice.AttributesByEntity()
+  this.alerts={type:"success",message:'Database\'s name is added successfully'}
+  this.alertVisible = true; 
+
   this.closeModal()
 }
 
@@ -117,6 +126,9 @@ ModifyName(){
   this.dbservice.ModifyTableName(this.dbservice.idTableSlected,this.dbservice.selectedEntity).subscribe(()=>{
       this.TableByDatabase()
   })
+  this.alerts={type:"success",message:'Table\'s name is updated successfully'}
+  this.alertVisible = true; 
+
 }
 ModifyAttribute(){
  this.dbservice.updateAttibuteInCollection(this.databaseconnected,this.dbservice.selectedEntity,this.attributeselected,this.attributeName).subscribe()
@@ -124,6 +136,9 @@ ModifyAttribute(){
     this.dbservice.AttributesByEntity()
     this.closeModal()
   })
+  this.alerts={type:"success",message:'Attribute is updated successfully'}
+  this.alertVisible = true; 
+
 }
 modify(attribut:any){
   this.typeform='update'
@@ -199,10 +214,12 @@ AddData(){
      body[this.dbservice.attributes[i].name_attribute]=this.dbservice.attributes[i].value
   
   }
-  body['Date_creation']= new Date().toISOString().slice(0, 19).replace('T', ' ');
-  body['Date_update'] = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
 this.dbservice.insertData(this.databaseconnected,this.dbservice.selectedEntity,body).subscribe()
+this.alerts1={type:"success",message:'Data is added successfully'}
+  this.alertVisible1 = true; 
 this.closeModalData()
+this.openModalAdd()
 }
 ModifyData(id:string){
   this.formData='update'
@@ -234,6 +251,8 @@ ModifynewData(){
   }
   body['Date_update']=new Date().toISOString().slice(0, 19).replace('T', ' '); 
   this.dbservice.update_data(this.databaseconnected,this.dbservice.selectedEntity,body,this.idattributeselected).subscribe()
+  this.alerts1={type:"success",message:'Data is updated successfully'}
+  this.alertVisible1 = true; 
   this.closeModalData()
   this.openModalAdd()
 }
@@ -245,5 +264,9 @@ update=false
 openselect(attr:any){
   attr.value=""
   this.update=true
+}
+closeAlert() {
+  this.alertVisible = false; 
+  this.alertVisible1 = false;
 }
 }

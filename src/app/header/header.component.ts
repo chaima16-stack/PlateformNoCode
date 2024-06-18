@@ -3,6 +3,8 @@ import { AppCreationServiceService } from '../services/app-service/app-creation-
 import { AuthService } from '../services/auth-service/auth.service';
 import { DatabaseServiceService } from '../services/database-service/database-service.service';
 import { DesignServiceService } from '../services/design-service/design-service.service';
+import { Router } from '@angular/router';
+declare var $: any;
 
 @Component({
   selector: 'app-header',
@@ -11,16 +13,24 @@ import { DesignServiceService } from '../services/design-service/design-service.
 })
 export class HeaderComponent implements OnInit {
   app:any
-
+  screenchoice=""
   isDropdownOpen: boolean = false; // Variable pour suivre l'état du dropdown
   isDropdownOpenSetting =false
-constructor(private authservice:AuthService,private dbservice:DatabaseServiceService, public appService: AppCreationServiceService,public appCreationService: AppCreationServiceService,public designService:DesignServiceService){}
+constructor(private router: Router,private authservice:AuthService,private dbservice:DatabaseServiceService, public appService: AppCreationServiceService,public appCreationService: AppCreationServiceService,public designService:DesignServiceService){}
 ngOnInit(): void {
   //liste des apps d'user connecté 
   let token = sessionStorage.getItem("loggedInUser");
   this.authservice.decodeToken(token).subscribe((response:any)=>{
   this.appService.getAppByUser(parseInt(response.user_id,10)).subscribe((response)=>{
     const appsArray = Array.isArray(response) ? response : [response];
+    let app= sessionStorage.getItem('app')
+    if(app)
+    for(let i=0;i<appsArray.length;i++){
+      if(parseInt(app,10)==appsArray[i].id_app){
+         this.designService.activeApp = appsArray[i].name
+         break;
+      }
+    }
     this.app=appsArray.map(app=>({
       date_creation: app.date_creation,
       date_update: app.date_update,
@@ -82,5 +92,29 @@ ngOnInit(): void {
     sessionStorage.removeItem('id_db')
     sessionStorage.setItem('loggedIn','false')
     this.authservice.SignOut();
+  }
+  openModal() {
+    this.designService.getScreenByApp()
+    $('#myModals').modal('show'); 
+  }
+  closeModal() {
+    
+    this.screenchoice=""
+    $('#myModals').modal('hide'); 
+
+  }
+  formscreen(){
+    sessionStorage.setItem('idscreen',this.screenchoice)
+    this.appService.getScreenbyId(parseInt(this.screenchoice,10)).subscribe((response:any)=>{
+      console.log(response)
+      if(response.type_screen=='Authtenfication'){
+        this.router.navigate(['/preview/login']);
+      }else 
+      {
+        this.router.navigate(['/preview/crud']);
+      }
+    })
+    
+    this.closeModal()
   }
 }

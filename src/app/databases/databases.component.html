@@ -17,7 +17,7 @@
               }}</a>
             </div>
             <div class="col-md-2 col-sm-2 col-lg-2 col-2">
-              <i
+              <i onclick="return confirm('Are you sure you want to delete this entity?');"
                 (click)="deleteEntity(entity.id)"
                 class="bi bi-trash3 icons-trash"
                 title="Delete this entity"
@@ -47,6 +47,13 @@
   </div>
 
   <div class="right-side">
+   <!-- Alerte Bootstrap -->
+          <div *ngIf="alertVisible">
+            <div class="alert alert-{{alerts.type}} alert-dismissible fade show" role="alert">
+              {{alerts.message}}
+              <button type="button" class="btn-close" aria-label="Close" (click)="closeAlert()"></button>
+            </div>
+          </div>
     <div class="search">
       <h6>Attributes for</h6>
 
@@ -92,7 +99,7 @@
             style="cursor: pointer"
             title="Modify the attribute"
           ></i>
-          <i
+          <i onclick="return confirm('Are you sure you want to delete this attribute?');"
             (click)="deleteAttribute(attr)"
             class="bi bi-trash"
             style="cursor: pointer; margin-left: 5px"
@@ -230,6 +237,12 @@
 
       <!-- Corps de la fenêtre modale -->
       <div class="modal-body">
+       <div *ngIf="alertVisible1">
+            <div class="alert alert-{{alerts1.type}} alert-dismissible fade show" role="alert">
+              {{alerts1.message}}
+              <button type="button" class="btn-close" aria-label="Close" (click)="closeAlert()"></button>
+            </div>
+          </div>
         <!-- Barre de recherche -->
         <div class="searchbar search">
           <input type="text" placeholder="Search..." class="search-bar"><i style="margin-left: 5px; font-size:15px" class="bi bi-search"></i>
@@ -254,7 +267,7 @@
             style="cursor: pointer"
          
           ></i>
-          <i
+          <i onclick="return confirm('Are you sure you want to delete this data?');"
             (click)="DeleteData(value.id)"
             class="bi bi-trash"
             style="cursor: pointer; margin-left: 5px"

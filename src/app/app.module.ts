@@ -14,6 +14,7 @@ import { AuthentificationComponent } from './authentification/authentification.c
 import { HomeComponent } from './home/home.component';
 import { SettingsComponent } from './settings/settings.component';
 import { WorkflowComponent } from './workflow/workflow.component';
+import { PreviewModule } from './preview/preview.module';
 
 
 
@@ -31,6 +32,7 @@ import { WorkflowComponent } from './workflow/workflow.component';
     HomeComponent,
     SettingsComponent,
     WorkflowComponent,
+    
 
 
 
@@ -43,7 +45,7 @@ import { WorkflowComponent } from './workflow/workflow.component';
     CdkDrag,
     AppRoutingModule,
     HttpClientModule,
-    
+    PreviewModule
     
 
   ],
