@@ -36,6 +36,13 @@
     <div class="content flex-grow-1">
       <!-- Section principale -->
       <div class="main mt-4">
+        <!-- Alerte Bootstrap -->
+          <div *ngIf="alertVisible">
+            <div class="alert alert-{{alerts.type}} alert-dismissible fade show" role="alert">
+              {{alerts.message}}
+              <button type="button" class="btn-close" aria-label="Close" (click)="closeAlert()"></button>
+            </div>
+          </div>
         <!-- Lister les applications horizontalement -->
         <div class="d-flex app-list">
           <div (click)="selectApp(item)"  [ngClass]="{'app-card-active':activeApp ===item.name_app , 'app-card':activeApp != item.name_app }" class="  p-2"  *ngFor="let item of app;  let i = index" >
@@ -78,7 +85,7 @@
                 <span class="input-group-text"><i (click)="updateScreen(screen,screen.name_screen)" class="bi bi-check" title="Confirm the updates" style="cursor:pointer;" ></i></span>
               </div>
               <input type="text" [(ngModel)]="screen.name_screen" name="screen{{i}}" class="form-control input-width" id="screen{{i}}" placeholder="Enter screen name" />           
-                 <i (click)="deleteScreen(screen)" style="cursor: pointer;color:red;" class="bi bi-trash position-absolute top-0 end-0 m-2"></i>
+                 <i onclick="return confirm('Are you sure you want to delete this interface?');" (click)="deleteScreen(screen)" style="cursor: pointer;color:red;" class="bi bi-trash position-absolute top-0 end-0 m-2"></i>
             </div>
             
           </div>

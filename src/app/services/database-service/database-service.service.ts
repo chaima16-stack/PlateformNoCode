@@ -17,8 +17,8 @@ export class DatabaseServiceService {
   addDatabase(databaseName:string,date_creation: Date): Observable<any>{
     const body={
       name_db: databaseName,
-      date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
-      date_update: date_creation.toISOString().slice(0, 10)
+      date_creation: date_creation.toISOString().slice(0, 19).replace('T', ' '),  // Convertit la date en format ISO (YYYY-MM-DD)
+      date_update: date_creation.toISOString().slice(0, 19).replace('T', ' ')
     }
     return this.http.post(this.apiUrl+'databases/', body)
     .pipe(
@@ -34,8 +34,8 @@ addTable(tablename:string, db:number, date_creation :Date): Observable<any>{
   const body ={
     name_entity: tablename,
     db: db,
-    date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
-    date_update: date_creation.toISOString().slice(0, 10)
+    date_creation: date_creation.toISOString().slice(0, 19).replace('T', ' '),  // Convertit la date en format ISO (YYYY-MM-DD)
+    date_update: date_creation.toISOString().slice(0, 19).replace('T', ' ')
   }
   return this.http.post(this.apiUrl+'entities/',body).pipe(
     catchError(this.handleError)
@@ -50,8 +50,8 @@ addAttribute(attributename:string, type_attribute:string,listfield:string,requir
   listField: listfield,
   required: required,
   entity: entityid,
-  date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
-  date_update: date_creation.toISOString().slice(0, 10)
+  date_creation: date_creation.toISOString().slice(0, 19).replace('T', ' '),  // Convertit la date en format ISO (YYYY-MM-DD)
+  date_update: date_creation.toISOString().slice(0, 19).replace('T', ' ')
   }
   return this.http.post(this.apiUrl+'attributes/',body).pipe(
     catchError(this.handleError)
@@ -63,8 +63,8 @@ addRelation(name_relation:string, type_attribute:string,date_creation:Date): Obs
   const body ={
    name_relation: name_relation,
    type_relation: type_attribute,
-    date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
-    date_update: date_creation.toISOString().slice(0, 10)
+    date_creation: date_creation.toISOString().slice(0, 19).replace('T', ' '),  // Convertit la date en format ISO (YYYY-MM-DD)
+    date_update: date_creation.toISOString().slice(0, 19).replace('T', ' ')
   }
   return this.http.post(this.apiUrl+'relations/',body).pipe(
     catchError(this.handleError)
@@ -188,14 +188,19 @@ getData(db_name:string, collection_name:string){
 }
 
 insertData(db_name:string,collection_name:string,attributes:any){
+  const date = new Date()
+  attributes['Date_creation']= date.toISOString().slice(0, 19).replace('T', ' ');
+  attributes['Date_update'] = date.toISOString().slice(0, 19).replace('T', ' ');
   const body={
     db_name: db_name,
     collection_name: collection_name,
-    attributes : attributes
+    attributes : attributes,
   }
   return this.http.post(this.apiUrl+'Document/',body)
 }
 update_data(db_name:string,collection_name:string,update_data:any,id:string){
+  const date = new Date()
+  update_data['Date_update'] = date.toISOString().slice(0, 19).replace('T', ' ');
   const body={
     db_name: db_name,
     collection_name: collection_name,

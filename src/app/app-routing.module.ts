@@ -20,6 +20,7 @@ const routes: Routes = [
   {path:'Home', component:HomeComponent, canActivate: [AuthGuard]},
   {path:'Settings', component:SettingsComponent, canActivate: [AuthGuard]},
   {path:'Workflow', component:WorkflowComponent, canActivate: [AuthGuard]},
+  {path: 'preview', loadChildren: () => import('./preview/preview.module').then(m => m.PreviewModule),canActivate: [AuthGuard] },
   {path:'LogIn', component:AuthentificationComponent,canActivate: [LoginGuard]},
   
 ];

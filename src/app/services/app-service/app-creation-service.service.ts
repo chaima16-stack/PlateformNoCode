@@ -99,6 +99,10 @@ AddElementByScreen(screenid: number,elementid:string, Type_element: string, labe
 getElementById(id:string){
   return this.http.get(this.apiUrl+'elements/'+id);
 }
+getScreenbyId(id:number){
+  return this.http.get(this.apiUrl+'screens/'+id)
+}
+
 ModifiyLabel(label:string, id:string){
 
   return this.http.patch(this.apiUrl+ 'elements/'+id +'/', {"label":label }) .pipe(

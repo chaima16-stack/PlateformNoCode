@@ -18,7 +18,15 @@ elementchoice =''
 typechoice =''
 ideventSelected:number=0;
 events:any=[]
-
+champs=""
+tables :any=[]
+champschoice=''
+screenchoice=""
+inputs:any=[]
+tablechoice=""
+attributes:any=[]
+changeselected=false;
+addOtherInput=false
   ngOnInit(): void {
     this.designService.activeLink = 'Workflow'
     const app = sessionStorage.getItem('app')
@@ -82,17 +90,17 @@ events:any=[]
       })
     }
   }
-  openModal() {
+  openModalevent() {
     this.workflowservice.elements=[]
     this.getelements()
     
-    $('#myModal').modal('show'); 
+    $('#myModal1').modal('show'); 
   }
-  closeModal() {
+  closeModalevent() {
     this.refresh()
     this.typechoice=""
     this.elementchoice=""
-    $('#myModal').modal('hide'); 
+    $('#myModal1').modal('hide'); 
 
   }
   openModalAction(idevent:number) {
@@ -133,10 +141,10 @@ AddEvent(){
   const app = sessionStorage.getItem('app')
   if(app){
   this.workflowservice.addEvent(this.elementchoice,parseInt(app,10),this.typechoice,new Date()).subscribe((response)=>{
-    console.log(response)
+    
   }) 
 }
-  this.closeModal()
+  this.closeModalevent()
 }
 getevents(){
   
@@ -221,9 +229,16 @@ refresh(){
   }
 }
 addAction(){
-  this.workflowservice.addAction(this.ideventSelected,this.typechoice,new Date()).subscribe()
   
-  this.closeModalAction()
+  if(this.typechoice=="Log the user in"  || this.typechoice=="Sign the user up"   ){
+    this.openModalchamps()
+   
+  }else if(this.typechoice=="Go to page..."  ){
+    this.openModalpage()
+  }
+
+  else{  this.workflowservice.addAction(this.ideventSelected,this.typechoice,null,new Date()).subscribe()
+  this.closeModalAction()}
 }
 deleteAction(id:number){
   this.workflowservice.deleteAction(id).subscribe();
@@ -232,5 +247,108 @@ deleteAction(id:number){
 deleteEvent(id:number){
   this.workflowservice.deleteEvent(id).subscribe();
  location.reload()
+}
+
+openModalpage(){
+  this.designService.getScreenByApp()
+  $('#myModalpage').modal('show');
+}
+closeModalpage() {
+    
+  this.screenchoice=""
+  $('#myModalpage').modal('hide'); 
+
+}
+formscreen(){
+  console.log(this.screenchoice)
+  this.workflowservice.addAction(this.ideventSelected,this.typechoice,parseInt(this.screenchoice,10),new Date()).subscribe((data:any)=>{
+  })
+  this.closeModalpage()
+  this.closeModalAction()
+}
+openModalchamps() {
+  const db = sessionStorage.getItem('id_db')
+  for(let i=0;i<this.workflowservice.elements.length;i++){
+   
+      if(this.workflowservice.elements[i].type=='Input'){
+        let element={
+              id_element:this.workflowservice.elements[i].id_element,
+              label: this.workflowservice.elements[i].label,
+              type: this.workflowservice.elements[i].type,
+              screen: this.workflowservice.elements[i].name_screen
+            }
+            this.inputs.push(element)
+      }
+  }
+      if(db)
+  this.dbservice.tableListByDatabase(parseInt(db,10)).subscribe((response:any)=>{
+  
+    for(let i=0;i<response.length;i++){
+      if(response[i].name_entity=='User') this.tables.push(response[i])
+
+    }
+  })
+  $('#myModalchamps').modal('show'); 
+}
+closeModalchamps() {
+  this.champs=""
+  this.tablechoice=""
+  this.champschoice=""
+  this.changeselected=false
+  this.inputs=[]
+  this.attributes=[]
+  this.tables=[]
+  $('#myModalchamps').modal('hide'); 
+
+}
+item:any=[]
+addInputAction(){
+  this.dbservice.getEntityById(parseInt(this.tablechoice,10)).subscribe((response:any)=>{
+    this.tablechoice= response.name_entity
+    if(this.addOtherInput) { 
+      const body={
+        'idelement':this.champschoice,
+        'champs':this.champs,
+        'table':this.tablechoice
+      }
+      this.item.push(body)
+      this.champs=""
+      this.tablechoice=""
+      this.champschoice=""
+      this.inputs=[]
+      this.tables=[]
+      this.changeselected=false
+      this.addOtherInput=false
+      this.openModalchamps() 
+      }
+      
+      else{
+        const body={
+          'idelement':this.champschoice,
+          'champs':this.champs,
+          'table':this.tablechoice
+        }
+        this.item.push(body)
+        console.log("hi")
+    this.workflowservice.addAction(this.ideventSelected,this.typechoice,null,new Date()).subscribe((data:any)=>{
+      for(let i=0;i<this.item.length;i++){
+        this.workflowservice.addElementAction(data.id,this.item[i].idelement,this.item[i].champs,this.item[i].table).subscribe()
+      }
+    })
+    this.closeModalchamps()
+    this.closeModalAction()
+  
+  }
+
+ 
+   
+  })
+ 
+}
+onchangeSelect(){
+  this.changeselected=true
+  this.dbservice.AttributeByEntity(parseInt(this.tablechoice,10)).subscribe((response:any)=>{
+    this.attributes=response
+  })
 }
 }
