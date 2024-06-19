@@ -1,0 +1,11 @@
+String
+Number
+Boolean
+Date
+Array
+Object
+ObjectId
+Null
+Undefined
+Binary Data
+Regular Expression

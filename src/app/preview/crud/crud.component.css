@@ -1,0 +1,141 @@
+.gradient-custom {
+   background-color: white;
+    min-height: 100%;
+  }
+  #previewContainer {
+   
+    width: 700px; 
+    height: 900px; 
+    position: relative;
+  }
+  .buttons {
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+    padding: 0.75rem 1rem;
+    width: 150px;
+    height: 45px;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  }
+  
+  .alert {
+    left: 60%;
+  }
+  
+  .texte {
+    font-family: "Arial", sans-serif;
+    font-size: 24px;
+    line-height: 1.5;
+    text-align: center; 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
+    white-space: nowrap;
+    display: inline;
+  }
+  
+
+  
+  .icon-like {
+    font-size: 25px;
+  }
+  
+  .input-like {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid #5d5c5c;
+    border-radius: 5px;
+    content: attr(placeholder);
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #999; 
+    width: 388px;
+    height: 45px;
+    background-color: #F8F9FB;
+    padding-top: 13px;
+    padding-bottom: 13px;
+  }
+ 
+  .contenu {
+    margin-left: 70px;
+  }
+  
+  .footer {
+    background-color: white;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: left;
+   
+  }
+  .btn {
+    background-color: #000000;
+    color: white;
+    padding: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+    margin-top: 3%;
+    margin-right: 10px;
+    width: 28%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    font-weight: bold;
+    
+  }
+  
+  .btn:hover {
+    background-color: #1c1b1b;
+  }
+  .footer-btn {
+    background-color: black;
+    margin-left: 20px;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .footer-btn .bi{
+    padding: 5px;
+  }
+.add-button {
+    margin-right: 10px;
+    float: right;
+  margin-bottom: 10px;
+  font-size: 20px;
+   cursor: pointer;
+}
+
+  table{
+    min-width:100%;
+
+  }
+  thead{
+    background-color: rgba(0, 53, 245, 0.3);
+   }
+  .tbl-content{
+    height:150px;
+    margin-top: 0px;
+  }
+  th{
+    padding: 8px 70px;
+    text-align:center;
+    font-weight: 500;
+    font-size: 12px;
+    color: #000000;
+    text-transform: uppercase;
+   
+  }
+  td{
+    padding: 15px;
+    text-align: center;
+    vertical-align:middle;
+    font-weight: 300;
+    font-size: 12px;
+    color: #000000;
+  }
+  

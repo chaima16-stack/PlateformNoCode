@@ -2,7 +2,7 @@
 
  <div id="popupContainer">
         <div lass="container mt-5 overlay" id="popupForm">
-            <span class="closeBtn" onclick="closePopup()">&times;</span>
+          
             <div class="row d-flex justify-content-center ">
               <div class="col-md-8">
           <form id="regForm" (ngSubmit)="submitForm()" #appForm="ngForm">
@@ -12,6 +12,10 @@
               <div id="tab" class="tab">
                   <h6>Name of application</h6>
                   <p><input placeholder="Name..."  [(ngModel)]="appName" name="appName" required></p>
+              </div>
+              <div id="tab" class="tab">
+                  <h6>Name of DataBase</h6>
+                  <p><input placeholder="Name..."  [(ngModel)]="databaseName" name="databaseName" required></p>
               </div>
               <div  class="tab">
                 <h6>Description of Application</h6>

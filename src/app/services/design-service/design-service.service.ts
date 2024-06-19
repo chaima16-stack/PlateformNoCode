@@ -5,6 +5,10 @@ import { AppCreationServiceService } from '../app-service/app-creation-service.s
   providedIn: 'root'
 })
 export class DesignServiceService {
+  activeLink: string = ''; 
+  tables:any
+
+  activeApp="Applications"; // Variable pour stocker l'application active
   buttons: any[] = [];
   listebuttons:any[]=[]
   inputs: any[]=[];
@@ -21,8 +25,29 @@ export class DesignServiceService {
   textButton="Button"
   textlabel="Text"
   textinput="Type a placeholder here ...."
+  textlist=""
+  itemsTaken :any //screens by app
+  buttonColor= '#ffffff' // default color
+  textcolor =""
+  buttonclor=""
+  textbuttonColor=""
   constructor(private appservice:AppCreationServiceService) { }
-
+  getScreenByApp(){
+    const id_app= sessionStorage.getItem('app')
+    if(id_app)
+     this.appservice.getScreensByApp(parseInt(id_app,10)).subscribe(response=>{
+      const screensArray = Array.isArray(response) ? response : [response];
+        this.itemsTaken = screensArray.map(screen => ({
+          app: screen.app,
+          date_creation: screen.date_creation,
+          date_update: screen.date_update,
+          id_screen: screen.id_screen,
+          name_screen: screen.name_screen,
+          type_screen: screen.type_screen,
+          showSubItems: false
+        }));})
+     
+  }
 delete(element:any,liste:any){
   for(let i=0;i<liste.length;i++){
     if(liste[i].id==element.id){
@@ -78,5 +103,4 @@ getUniqueRandomId(typeId:any,tab: any) {
 
   return randomId;
 }
-
 }

@@ -1,0 +1,359 @@
+<app-header></app-header>
+
+
+<div class="container-fluid">
+  <div class="contenu">
+    <div class="row">
+      <div *ngFor="let event of events" class="col-2 event-container">
+        <div class="workflow-event">
+          <i  (click)="deleteEvent(event.id_event)" class="bi bi-trash delete-icon"></i>
+          When <br> 
+          <div class="event">{{event.type}}-<br>{{event.type_element}}:{{event.label}}</div>
+        </div>
+        <div class="arrow-up-container">
+          <i class="bi bi-caret-up-fill arrow-up"></i>
+        </div>
+        <div class="step-details">
+          <div *ngFor="let action of event.actions; let i = index">
+           <i (click)="deleteAction(action.id)" class="bi bi-trash delete-icon-action"></i>
+            Step {{i + 1}}<br>
+            
+            <div class="actiontext">{{action.type}} </div>
+            <div class="arrow-down">&#x2193;</div>
+          </div>
+          <div (click)="openModalAction(event.id_event)" class="add-action"><i class="bi bi-node-plus-fill"></i>Add an Action...</div>
+        </div>
+      </div>
+      <div (click)="openModalevent()" class="col-2 workflow-event-add"><i class="bi bi-node-plus-fill"></i>Add an Event...</div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Fenêtre modale event-->
+<div class="modal" id="myModal1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- En-tête de la fenêtre modale -->
+      <div class="modal-header">
+        <h4  class="modal-title">Add an event</h4>
+        <button
+          type="button"
+          class="close"
+          (click)="closeModalevent()"
+          data-dismiss="modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Corps de la fenêtre modale -->
+      <div class="modal-body">
+        <!-- Formulaire de modification -->
+        <form
+          id="eventForm"
+           (ngSubmit)="AddEvent()"
+          #eventForm="ngForm"
+        >
+        
+
+          <div  class="form-group">
+            <label for="elementchoice">Element:</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="elementchoice"
+                name="elementchoice"
+                [(ngModel)]="elementchoice">
+                 <option value="null">Null</option>
+                <option *ngFor="let element of workflowservice.elements" [value]="element.id_element">
+              Type: {{element.type}}&nbsp;&nbsp;ID:{{element.id_element}}&nbsp;&nbsp;Label:{{element.label}}&nbsp;&nbsp;Screen:{{element.name_screen}}
+                </option>
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
+
+          <div  class="form-group">
+            <label for="attributeType">Type of event:</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="typechoice"
+                name="typechoice"
+                [(ngModel)]="typechoice">
+                 
+                <option value="User is logged in">User is logged in</option>
+                <option value="User is logged out">User is logged out</option>
+                <option value="User is sign up done">User is sign up done</option>
+                <option value="An element is clicked">An element is clicked</option>
+                <option value="Add button is active">Add button is active</option>
+                <option value="Update button is active">Update button is active</option>
+                 <option value="Delete button is active">Delete button is active</option>
+                   <option value="Add button is disabled">Add button is disabled</option>
+                <option value="Update button is disabled">Update button is disabled</option>
+                 <option value="Delete button is disabled">Delete button is disabled</option>
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
+       
+
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModalevent()"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </form>
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Fenêtre modale action-->
+<div class="modal" id="myModalAction">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- En-tête de la fenêtre modale -->
+      <div class="modal-header">
+        <h4  class="modal-title">Add an action</h4>
+        <button
+          type="button"
+          class="close"
+          (click)="closeModalAction()"
+          data-dismiss="modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Corps de la fenêtre modale -->
+      <div class="modal-body">
+        <!-- Formulaire de modification -->
+        <form
+          id="actionForm"
+       (ngSubmit)="addAction()"
+          #actionForm="ngForm"
+        >
+        
+
+     
+
+          <div  class="form-group">
+            <label for="attributeType">Type of action:</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="typechoice"
+                name="typechoice"
+                [(ngModel)]="typechoice">
+                 
+                <option >Sign the user up</option>
+                <option >Log the user in</option>
+                <option >Sign/login with google</option>
+                <option >Log the user out</option>
+                <option >Verify the informations </option>
+                 <option >Refresh the page</option>
+                   <option >Clean the inputs</option>
+                <option >Color the inputs in red</option>
+                 <option >Go to page...</option>
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
+       
+
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModalAction()"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </form>
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- Fenêtre modale action-->
+<div class="modal" id="myModalchamps">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- En-tête de la fenêtre modale -->
+      <div class="modal-header">
+        <h4  class="modal-title">Match the input with the information you want to verify:</h4>
+        <button
+          type="button"
+          class="close"
+          (click)="closeModalchamps()"
+          data-dismiss="modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Corps de la fenêtre modale -->
+      <div class="modal-body">
+        <!-- Formulaire de modification -->
+        <form
+          id="actionForm"
+       (ngSubmit)="addInputAction()"
+          #actionForm="ngForm"
+        >
+        
+ <div  class="form-group">
+            <label for="champschoice">choose the input:</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="champschoice"
+                name="champschoice"
+                [(ngModel)]="champschoice" 
+               
+                >
+                 
+                <option *ngFor="let input of inputs"  [value]="input.id_element">
+              Type: {{input.type}}&nbsp;&nbsp;ID:{{input.id_element}}&nbsp;&nbsp;Label:{{input.label}}&nbsp;&nbsp;Screen:{{input.screen}}
+                </option>
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
+     
+
+          <div  class="form-group">
+            <label for="attributeType">Table</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="tablechoice"
+                name="tablechoice"
+                [(ngModel)]="tablechoice"  (change)=onchangeSelect()>
+                 
+                <option *ngFor="let table of tables"  [value]="table.id">{{table.name_entity}}</option>
+                
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
+       <div *ngIf="changeselected"  class="form-group">
+            <label for="attributeType">attributes</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="champs"
+                name="champs"
+                [(ngModel)]="champs">
+                 
+                <option *ngFor="let attr of attributes"  [value]="attr.name_attribute">{{attr.name_attribute}}</option>
+                
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
+       
+   <div class="form-group form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="addOtherInput"
+              [(ngModel)]="addOtherInput"
+              name="addOtherInput"
+            >
+            <label class="form-check-label" for="addOtherInput">Add an other input</label>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModalchamps()"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </form>
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="myModalpage">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- En-tête de la fenêtre modale -->
+      <div class="modal-header">
+        <h4  class="modal-title">Choose a screen</h4>
+        <button
+          type="button"
+          class="close"
+          (click)="closeModalpage()"
+          data-dismiss="modal"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Corps de la fenêtre modale -->
+      <div class="modal-body">
+        <!-- Formulaire de modification -->
+        <form
+          id="screenForm"
+           (ngSubmit)="formscreen()"
+          #screenForm="ngForm"
+        >
+        
+
+     
+
+          <div  class="form-group">
+            <label for="attributeType">Screens:</label>
+            <div class="select-with-icon">
+              <select
+                class="form-control"
+                id="screenchoice"
+                name="screenchoice"
+                [(ngModel)]="screenchoice">
+                 
+                <option *ngFor="let itemTaken of designService.itemsTaken" [value]="itemTaken.id_screen"> {{ itemTaken.name_screen }}</option>
+               
+              </select>
+              <i class="bi bi-caret-down-fill"></i>
+            </div>
+          </div>
+       
+
+          <button type="submit" class="btn1 btn btn-primary">Save</button>
+          <button
+            type="button"
+            class="btn1 btn btn-secondary"
+            (click)="closeModalpage()"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </form>
+      </div>
+
+      
+    </div>
+  </div>
+</div>

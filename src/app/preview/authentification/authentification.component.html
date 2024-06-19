@@ -1,0 +1,39 @@
+<section class="gradient-custom">
+  <div class="container py-5 h-100">
+    <div class="row contenu h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div id="previewContainer">
+          <!-- Alerte Bootstrap -->
+           <div *ngIf="alerterror">
+            <div *ngFor="let error of workflowservice.errors" class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{error.type}}
+              <button type="button" class="btn-close" aria-label="Close" (click)="closeAlert()"></button>
+            </div>
+          </div>
+          <div *ngIf="alertVisible">
+            <div class="alert alert-{{alerts.type}} alert-dismissible fade show" role="alert">
+              {{alerts.message}}
+              <button type="button" class="btn-close" aria-label="Close" (click)="closeAlert()"></button>
+            </div>
+          </div>
+          <form id="Form" #Form="ngForm">
+            <div *ngFor="let element of elements" [ngStyle]="getStyle(element.position)">
+              <ng-container [ngSwitch]="element.type_element">
+                <button id="{{element.id}}"  [style.borderColor]="element.color"
+          [style.background]="element.color" [style.color]="element.textcolor"   class="buttons btn btn-primary d-grid text-uppercase fw-bold" *ngSwitchCase="'Button'">{{ element.label }}</button>
+                <i id="{{element.id}}" *ngSwitchCase="'Icon'" class="bi-{{ element.label }} icon-like"></i>
+                <input [type]=element.type_input id="{{element.id}}" name="{{element.label}}" [(ngModel)]="element.value" class="input-like" *ngSwitchCase="'Input'" [placeholder]="element.label" />
+                <div id="{{element.id}}" class="texte"  [style.color]="element.color"  *ngSwitchCase="'Text'">{{ element.label }}</div>
+              </ng-container>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <button class="footer-btn" routerLink="/Design"><i class="bi bi-code-slash"></i> Back to Edit <i class="bi bi-code-slash"></i></button>
+</footer>

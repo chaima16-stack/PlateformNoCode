@@ -3,7 +3,9 @@ import { DesignServiceService } from '../services/design-service/design-service.
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { AppCreationServiceService } from '../services/app-service/app-creation-service.service';
-import { Observable } from 'rxjs';
+import { DatabaseServiceService } from '../services/database-service/database-service.service';
+import { AuthService } from '../services/auth-service/auth.service';
+declare var $: any;
 @Component({
   selector: 'app-design',
   templateUrl: './design.component.html',
@@ -21,7 +23,9 @@ export class DesignComponent implements OnInit {
   draggedlist=false;
   subitem:any;
   testdropped=false // pour tester s'il s'agit des élement dropped
-
+  data:any
+  k:any
+  attributes:any
   items = [
     { name: 'Elements Tree',subItems: [], showSubItems: false },
     { name: 'Elements', subItems: ['Text', 'Button', 'Icon','Image','Data List'] ,showSubItems: false},
@@ -32,53 +36,53 @@ export class DesignComponent implements OnInit {
   numberOfScreens: number=0;
   description: string ='';
   app:any // apps by user connected
-  itemsTaken :any //screens by app
   idscreen:any
-  constructor(public appService: AppCreationServiceService,public designService:DesignServiceService,private route: ActivatedRoute,private router: Router){}
+  databaseconnected=""
+  idUserconnected :any
+  constructor(private authservice:AuthService,private dbservice:DatabaseServiceService ,public appService: AppCreationServiceService,public designService:DesignServiceService,private route: ActivatedRoute,private router: Router){}
  
   ngOnInit(): void {
     //liste des apps d'user connecté 
     this.refreshListApp();
+    this.databaseconnected=sessionStorage.getItem('dbconnected') || '';
+    this.designService.getScreenByApp()
+    sessionStorage.removeItem('settings')
+    this.designService.activeLink = 'design'
   }
 refreshListApp(){
-  this.appService.getAppByUser(2).subscribe((response)=>{
-    const appsArray = Array.isArray(response) ? response : [response];
-    this.app=appsArray.map(app=>({
-      date_creation: app.date_creation,
-      date_update: app.date_update,
-      description: app.description,
-      id_app: app.id_app,
-      name_app: app.name,
-      user: app.user,
-      showSubItems: false
-    }))
-  });
-}
-getScreenByApp(appitem:any){
-   this.appService.getScreensByApp(appitem.id_app).subscribe(response=>{
-    const screensArray = Array.isArray(response) ? response : [response];
-      this.itemsTaken = screensArray.map(screen => ({
-        app: screen.app,
-        date_creation: screen.date_creation,
-        date_update: screen.date_update,
-        id_screen: screen.id_screen,
-        name_screen: screen.name_screen,
-        type_screen: screen.type_screen,
+  let token = sessionStorage.getItem("loggedInUser");
+  this.authservice.decodeToken(token).subscribe((response:any)=>{
+    this.appService.getAppByUser(parseInt(response.user_id,10)).subscribe((response)=>{
+      const appsArray = Array.isArray(response) ? response : [response];
+      this.app=appsArray.map(app=>({
+        date_creation: app.date_creation,
+        date_update: app.date_update,
+        description: app.description,
+        id_app: app.id_app,
+        name_app: app.name,
+        user: app.user,
         showSubItems: false
-      }));})
-   this.toggleSubItems(appitem)
-   for(let i=0;i<this.app.length;i++){
-    if(this.app[i]!=appitem && this.app[i].showSubItems){
-      this.toggleSubItems(this.app[i])
-    }
-   }
+      }))
+    });
+ 
+  })
 }
+TableByDatabase(){
+  const iddb = sessionStorage.getItem('id_db')
+  if(iddb)
+  this.dbservice.tableListByDatabase(parseInt(iddb,10)).subscribe((response)=>{
+    this.designService.tables = Array.isArray(response) ? response : [response];
+    
+  })
+ }
 getElement(item:any){
     this.designService.buttons=[]
     this.designService.inputs=[]
     this.designService.texts=[]
     this.designService.icons=[]
+    this.designService.lists=[]
     this.designService.listItem=[]
+   
     this.appService.getElmentByScreen(item.id_screen).subscribe((response) => {
       const elementsArray = Array.isArray(response) ? response : [response];
       for (let i = 0; i < elementsArray.length; i++) {
@@ -87,13 +91,41 @@ getElement(item:any){
           style: obj,
           id: elementsArray[i].id_element,
           InnerHtml: elementsArray[i].label,
-          type: elementsArray[i].type_element
+          type: elementsArray[i].type_element,
+          color:  elementsArray[i].color,
+          textcolor: elementsArray[i].textcolor,
+          attributes : [],
+          data : [],
+          k :[]
         };
         switch(element.type){
           case 'Button': this.designService.buttons.push(element);break;
           case 'Input': this.designService.inputs.push(element);break;
           case 'Text':this.designService.texts.push(element);break;
           case 'Icon': this.designService.icons.push(element);break;
+          case 'Data List': 
+          const iddb = sessionStorage.getItem('id_db')
+          if(iddb)
+          this.appService.getIdEntityByDatabase(parseInt(iddb,10),elementsArray[i].label).subscribe((data:any)=>{
+            this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
+              this.attributes= Array.isArray(response) ? response : [response];
+              
+              this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
+               element.attributes=this.attributes
+               this.k=this.generateArray(this.attributes.length)
+               element.k =this.k
+               this.dbservice.getData(this.databaseconnected,elementsArray[i].label).subscribe((response:any)=>{
+                this.data= Array.isArray(response.result) ? response.result : [response.result];
+                element.data =this.data
+                
+              
+              })
+            })
+          })
+          
+
+          this.designService.lists.push(element); 
+           break;
         }
 
         this.designService.listItem.push({
@@ -105,51 +137,44 @@ getElement(item:any){
       this.draggedInput = true; 
       this.draggedText = true;
       this.draggedIcon = true;
-      this.draggedText =true;
+      this.draggedlist =true;
     });
   
   
     this.toggleSubItems(item)
     this.idscreen=item.id_screen
-   for(let i=0;i<this.itemsTaken.length;i++){
-    if(this.itemsTaken[i]!=item && this.itemsTaken[i].showSubItems){
-      this.toggleSubItems(this.itemsTaken[i])
+   for(let i=0;i<this.designService.itemsTaken.length;i++){
+    if(this.designService.itemsTaken[i]!=item && this.designService.itemsTaken[i].showSubItems){
+      this.toggleSubItems(this.designService.itemsTaken[i])
     }
    }
   
   }
 deleteApp(id:any){
-  this.appService.deleteApp(id).subscribe()
-  this.refreshListApp();
+  this.appService.deleteApp(id).subscribe((response) => {
+    location.reload();
+  }, )
+ 
 }
 deleteScreen(appitem:any){
-  this.appService.deleteScreen(appitem.id_app).subscribe()
-  this.getScreenByApp(appitem)
+  this.appService.deleteScreen(appitem.id_screen).subscribe((response) => {
+    location.reload();
+  }, )
+  
 }
  
  
- addApp() {
-   
-   
-    this.appService.addApp(this.appName,this.description,new Date())
-    .subscribe((response) => {
-        console.log( response);
-        this.router.navigate(['/Screen/'+response.id_app+'/'+this.numberOfScreens]);
-      }, );
 
-      
-  }
 
 toggleSubItems(item:any): void {
     item.showSubItems = !item.showSubItems;
-    
+    this.TableByDatabase()
   }
 
 
   onDragStart(event: DragEvent,subItem:any) {
     this.draggedItem = event.target;
      this.subitem=subItem;
-    
   }
 
   onDragOver(event: DragEvent) {
@@ -187,8 +212,12 @@ toggleSubItems(item:any): void {
           if(!this.testdropped)
             this.appService.AddElementByScreen(this.idscreen,Info.id, 'Icon','person', JSON.stringify(Info.style), new Date()).subscribe();break;
           case'Image': this.draggedImage=true;Info.type = 'Image';Info.id='droppedImage'+this.designService.getUniqueRandomId('droppedImage',this.designService.images);this.designService.images.push(Info);break;
-          case'Data List': this.draggedlist=true;Info.type = 'Data List';Info.id='droppedlist'+this.designService.getUniqueRandomId('droppedlist',this.designService.lists);this.designService.lists.push(Info);break;
-        }
+          case'Data List': this.draggedlist=true;Info.type = 'Data List';Info.id='droppedlist'+this.designService.getUniqueRandomId('droppedlist',this.designService.lists);this.designService.lists.push(Info);
+  
+          if(!this.testdropped)
+            this.appService.AddElementByScreen(this.idscreen,Info.id, 'Data List','Data List', JSON.stringify(Info.style), new Date()).subscribe();break;
+         
+        }            
        if(this.testdropped){
         this.draggedItem.remove();
        
@@ -201,11 +230,12 @@ toggleSubItems(item:any): void {
   }
 
 
-UpdateList(event:any,type:any){
+UpdateList(event:any,type:any,table:any){
     let listbuttons = document.getElementsByClassName("buttonsdropped");
     let listtextes = document.getElementsByClassName("texte");
     let listinputs = document.getElementsByClassName("input-like");
     let listicons = document.getElementsByClassName("icon-like");
+    let listelists = document.getElementsByClassName("list-like")
     this.designService.listItem=[]
     if(event!=true){
     switch(type){
@@ -216,6 +246,8 @@ UpdateList(event:any,type:any){
             this.designService.delete(button,this.designService.buttons)
             this.designService.buttons[this.designService.buttons.length-1].id=button.id
             this.designService.buttons[this.designService.buttons.length-1].InnerHtml=button.innerHTML
+            this.designService.buttons[this.designService.buttons.length-1].color=button.style.background
+            this.designService.buttons[this.designService.buttons.length-1].textcolor=button.style.color
             this.testdropped=false
             this.appService.ModifiyPosition(JSON.stringify(this.designService.buttons[this.designService.buttons.length-1].style),button.id).subscribe()
           }
@@ -245,6 +277,8 @@ UpdateList(event:any,type:any){
           this.designService.delete(text,this.designService.texts)
           this.designService.texts[this.designService.texts.length-1].id=text.id
           this.designService.texts[this.designService.texts.length-1].InnerHtml=text.innerHTML
+          this.designService.texts[this.designService.texts.length-1].color=text.style.color
+
           this.testdropped=false
           this.appService.ModifiyPosition(JSON.stringify(this.designService.texts[this.designService.texts.length-1].style),text.id).subscribe()
         }
@@ -278,8 +312,35 @@ UpdateList(event:any,type:any){
       case'Data List': 
         if(this.testdropped){
 
-
-        }break;
+          const list= (event.target as HTMLElement)
+          this.designService.delete(list,this.designService.lists)
+          this.designService.lists[this.designService.lists.length-1].id=list.id
+          this.designService.lists[this.designService.lists.length-1].InnerHtml=table
+          const iddb = sessionStorage.getItem('id_db')
+          if(iddb)
+          this.appService.getIdEntityByDatabase(parseInt(iddb,10),table).subscribe((data:any)=>{
+            this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
+              this.attributes= Array.isArray(response) ? response : [response];
+              
+              this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
+              this.designService.lists[this.designService.lists.length-1].attributes=this.attributes
+               this.k=this.generateArray(this.attributes.length)
+               this.designService.lists[this.designService.lists.length-1].k =this.k
+               this.dbservice.getData(this.databaseconnected,table).subscribe((response:any)=>{
+                this.data= Array.isArray(response.result) ? response.result : [response.result];
+                this.designService.lists[this.designService.lists.length-1].data =this.data
+              
+              })
+            })
+          })
+          this.testdropped=false
+          this.appService.ModifiyPosition(JSON.stringify(this.designService.lists[this.designService.lists.length-1].style),list.id).subscribe()
+        }
+        const listdrop= listelists[listelists.length-1] as HTMLElement ;
+        
+        if(!document.getElementById(listdrop.id)){
+          listdrop.setAttribute('id',this.designService.lists[this.designService.lists.length-1].id);
+           };break;
     }
   }
  
@@ -287,6 +348,7 @@ UpdateList(event:any,type:any){
   this.designService.AddElementToListItem('Button',listbuttons)
   this.designService.AddElementToListItem('Input',listinputs)
   this.designService.AddElementToListItem('Text',listtextes)
+  this.designService.AddElementToListItem('Data List',listelists)
   }
 
 
@@ -345,7 +407,7 @@ delete(subItem:any){
       this.appService.deleteElement(subItem.id).subscribe()
     }
     }
-     this.UpdateList(true,true);
+     this.UpdateList(true,true,true);
  
   }
 
@@ -366,18 +428,27 @@ showPopUp(event:any,idpopup:any,idclose:any,type:any) {
   let popup = document.getElementById(idpopup)!;
   let closeBtn = document.getElementById(idclose)!;
   let id = (event.target as HTMLElement).closest('[id]')!.id;
-  
+
+
     document.getElementById(id)!.addEventListener('click', () => {
             if (this.nbpopupOpned==0){
               popup.style.display = 'block'; 
               this.nbpopupOpned++;
               switch(type){
                 case 'Button': this.index=this.designService.getIndex(this.designService.buttons,id)   
-                this.designService.textButton= this.designService.buttons[this.index].InnerHtml;break;
+                this.designService.textButton= this.designService.buttons[this.index].InnerHtml;
+                this.designService.buttonColor = this.designService.buttons[this.index].color
+                this.designService.textbuttonColor = this.designService.buttons[this.index].textcolor
+
+                break;
                 case 'Input': this.index=this.designService.getIndex(this.designService.inputs,id)   
                 this.designService.textinput= this.designService.inputs[this.index].InnerHtml;break;
                 case 'Text': this.index=this.designService.getIndex(this.designService.texts,id)   
-                this.designService.textlabel= this.designService.texts[this.index].InnerHtml;break;
+                this.designService.textlabel= this.designService.texts[this.index].InnerHtml;
+                this.designService.textcolor = this.designService.texts[this.index].color
+
+                break;
+                
               }
               
              }
@@ -390,11 +461,16 @@ showPopUp(event:any,idpopup:any,idclose:any,type:any) {
               this.nbpopupOpned=0;
               switch(type){
                 case 'Button': this.designService.buttons[this.index].InnerHtml = this.designService.textButton
-                this.appService.ModifiyLabel(this.designService.textButton,this.designService.buttons[this.index].id).subscribe();break;
+                this.designService.buttons[this.index].color = this.designService.buttonColor
+                this.designService.buttons[this.index].textcolor = this.designService.textbuttonColor
+
+                this.appService.ModifiyLabel(this.designService.textButton,this.designService.buttonColor,this.designService.textbuttonColor,this.designService.buttons[this.index].id).subscribe();break;
                 case 'Input':  this.designService.inputs[this.index].InnerHtml = this.designService.textinput
-                this.appService.ModifiyLabel(this.designService.textinput,this.designService.inputs[this.index].id).subscribe();break;
+                this.appService.ModifiyLabel(this.designService.textinput,null,null,this.designService.inputs[this.index].id).subscribe();break;
                 case 'Text':  this.designService.texts[this.index].InnerHtml = this.designService.textlabel
-                this.appService.ModifiyLabel(this.designService.textlabel,this.designService.texts[this.index].id).subscribe();break;
+                this.designService.texts[this.index].color = this.designService.textcolor
+                this.appService.ModifiyLabel(this.designService.textlabel,this.designService.textcolor,null,this.designService.texts[this.index].id).subscribe();break;
+                
               }
              
               popup.style.display = 'none'; 
@@ -445,7 +521,7 @@ showIcon(event: any) {
       const iconlist = document.getElementById('iconList');
       const nextPageBtn = document.getElementById("nextPageBtn");
       const prevPageBtn = document.getElementById("prevPageBtn");
-
+  
       const id = (event.target as HTMLElement).closest('[id]')!.id
       let icon = document.getElementById(id);
 
@@ -502,15 +578,12 @@ showIcon(event: any) {
                   iconOption.addEventListener('click',()=>{
                              icon!.innerHTML=`<i class="bi bi-${iconNameTrimmed}"></i>`;
                              let test=false
-                             console.log(this.designService.listeIcon.length)
                              //le cas de modifier 
                              for(let k=0;k<this.designService.listeIcon.length;k++){
                               
                               if(this.designService.listeIcon[k].id==id){
                                 this.designService.listeIcon[k].InnerHtml=iconNameTrimmed;
-                                console.log(iconNameTrimmed)
-                                console.log(id)
-                                this.appService.ModifiyLabel(iconNameTrimmed,id).subscribe()
+                                this.appService.ModifiyLabel(iconNameTrimmed,null,null,id).subscribe()
                                 test=true
                                 break;
                               }
@@ -527,7 +600,43 @@ showIcon(event: any) {
       }
     }
 
+generateArray(n:number): number[] {
+      return Array(n).fill(0).map((x, i) => i);
+    }
 
 
 
+
+
+idlist:any;
+openModal(id:any) {
+  $('#myModal').modal('show'); 
+  this.idlist = id;
+  this.index=this.designService.getIndex(this.designService.lists,this.idlist)   
+  this.designService.textlist= this.designService.lists[this.index].InnerHtml;
+}
+closeModal() {
+ 
+  $('#myModal').modal('hide'); 
+  this.designService.lists[this.index].InnerHtml = this.designService.textlist
+  this.appService.ModifiyLabel(this.designService.textlist,null,null,this.designService.lists[this.index].id).subscribe();
+  const iddb = sessionStorage.getItem('id_db')
+  if(iddb)
+  this.appService.getIdEntityByDatabase(parseInt(iddb,10),this.designService.textlist).subscribe((data:any)=>{
+    this.dbservice.AttributeByEntity(data[0].id).subscribe((response)=>{
+      this.attributes= Array.isArray(response) ? response : [response];
+      
+      this.attributes = this.attributes.map((item:any) => ({ ...item, value: '' })); //ajouter un champs value pour l'utiliser lors d'un ajout de data dans le formulaire
+      this.designService.lists[this.index].attributes=this.attributes
+       this.k=this.generateArray(this.attributes.length)
+       this.designService.lists[this.index].k =this.k
+       this.dbservice.getData(this.databaseconnected,this.designService.textlist).subscribe((response:any)=>{
+        this.data= Array.isArray(response.result) ? response.result : [response.result];
+        this.designService.lists[this.index].data =this.data
+        
+      
+      })
+    })
+  })
+}
 }

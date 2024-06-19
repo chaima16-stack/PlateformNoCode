@@ -1,0 +1,46 @@
+
+  img{
+    width: 93rem;
+    height: 43.5rem;
+    margin-left: -100px;
+  }
+  .content {
+    position: absolute;
+    top: 39%;
+    left: 4%;
+    color: rgb(2, 2, 2);
+    line-height: 1.2;
+    text-align: center;
+  }
+  
+  .button-container {
+    position: absolute;
+    bottom: 35%;
+    left: 12%;
+    font-weight: bold;
+  }
+  .content p{
+    font-size: 12px;
+  }
+
+  .btn-bottom-left {
+    position: relative;
+    left: 56%;
+    background-color: white;
+    font-weight: bold;
+    border: 2px solid rgb(61, 60, 60); /* Contour noir */
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-left: 30px;
+    border-radius: 4px;
+     color: black;
+}
+.bi{
+    margin-right: 15px;
+}
+.btn-bottom-left:hover{
+  color: white;
+  background-color: rgb(41, 40, 40);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}

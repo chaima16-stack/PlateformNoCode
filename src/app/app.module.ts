@@ -9,6 +9,16 @@ import {CdkDrag} from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { ApplicationComponent } from './application/application.component';
 import { ScreenComponent } from './screen/screen.component';
+import { DatabasesComponent } from './databases/databases.component';
+import { AuthentificationComponent } from './authentification/authentification.component';
+import { HomeComponent } from './home/home.component';
+import { SettingsComponent } from './settings/settings.component';
+import { WorkflowComponent } from './workflow/workflow.component';
+import { PreviewModule } from './preview/preview.module';
+
+
+
+
 
 @NgModule({
   declarations: [
@@ -16,7 +26,17 @@ import { ScreenComponent } from './screen/screen.component';
     HeaderComponent,
     DesignComponent,
     ApplicationComponent,
-    ScreenComponent
+    ScreenComponent,
+    DatabasesComponent,
+    AuthentificationComponent,
+    HomeComponent,
+    SettingsComponent,
+    WorkflowComponent,
+    
+
+
+
+   
    
   ],
   imports: [
@@ -25,6 +45,9 @@ import { ScreenComponent } from './screen/screen.component';
     CdkDrag,
     AppRoutingModule,
     HttpClientModule,
+    PreviewModule,
+
+
     
 
   ],

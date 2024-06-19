@@ -1,0 +1,90 @@
+.gradient-custom {
+  /* fallback for old browsers */
+  background: #6a11cb;
+  
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgb(128, 170, 242));
+  
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, rgb(231, 209, 255), rgba(128, 170, 242));
+  min-height: 100%;
+}
+
+.buttons {
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+  width: 150px;
+  height: 45px;
+  border-radius: 5px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.alert {
+  left: 60%;
+}
+
+.texte {
+  font-family: "Arial", sans-serif;
+  font-size: 24px;
+  line-height: 1.5;
+  text-align: center; 
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
+  white-space: nowrap;
+  display: inline;
+}
+
+.card {
+  margin-top: 20%;
+}
+
+.icon-like {
+  font-size: 25px;
+}
+
+.input-like {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid #5d5c5c;
+  border-radius: 5px;
+  content: attr(placeholder);
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #999; 
+  width: 388px;
+  height: 45px;
+  background-color: #F8F9FB;
+  padding-top: 13px;
+  padding-bottom: 13px;
+}
+
+.contenu {
+  margin-left: 200px;
+}
+
+.footer {
+  background-color: white;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: left;
+ 
+}
+
+.footer-btn {
+  background-color: black;
+  margin-left: 20px;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.footer-btn .bi{
+  padding: 5px;
+}
