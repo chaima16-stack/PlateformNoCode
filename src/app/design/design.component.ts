@@ -92,6 +92,8 @@ getElement(item:any){
           id: elementsArray[i].id_element,
           InnerHtml: elementsArray[i].label,
           type: elementsArray[i].type_element,
+          color:  elementsArray[i].color,
+          textcolor: elementsArray[i].textcolor,
           attributes : [],
           data : [],
           k :[]
@@ -162,13 +164,7 @@ deleteScreen(appitem:any){
 }
  
  
-/*  addApp() {
-    this.appService.addApp(this.appName,this.description,new Date())
-    .subscribe((response) => {
-        console.log( response);
-        this.router.navigate(['/Screen/'+response.id_app+'/'+this.numberOfScreens]);
-      }, );
-  } */
+
 
 toggleSubItems(item:any): void {
     item.showSubItems = !item.showSubItems;
@@ -250,6 +246,8 @@ UpdateList(event:any,type:any,table:any){
             this.designService.delete(button,this.designService.buttons)
             this.designService.buttons[this.designService.buttons.length-1].id=button.id
             this.designService.buttons[this.designService.buttons.length-1].InnerHtml=button.innerHTML
+            this.designService.buttons[this.designService.buttons.length-1].color=button.style.background
+            this.designService.buttons[this.designService.buttons.length-1].textcolor=button.style.color
             this.testdropped=false
             this.appService.ModifiyPosition(JSON.stringify(this.designService.buttons[this.designService.buttons.length-1].style),button.id).subscribe()
           }
@@ -279,6 +277,8 @@ UpdateList(event:any,type:any,table:any){
           this.designService.delete(text,this.designService.texts)
           this.designService.texts[this.designService.texts.length-1].id=text.id
           this.designService.texts[this.designService.texts.length-1].InnerHtml=text.innerHTML
+          this.designService.texts[this.designService.texts.length-1].color=text.style.color
+
           this.testdropped=false
           this.appService.ModifiyPosition(JSON.stringify(this.designService.texts[this.designService.texts.length-1].style),text.id).subscribe()
         }
@@ -436,11 +436,18 @@ showPopUp(event:any,idpopup:any,idclose:any,type:any) {
               this.nbpopupOpned++;
               switch(type){
                 case 'Button': this.index=this.designService.getIndex(this.designService.buttons,id)   
-                this.designService.textButton= this.designService.buttons[this.index].InnerHtml;break;
+                this.designService.textButton= this.designService.buttons[this.index].InnerHtml;
+                this.designService.buttonColor = this.designService.buttons[this.index].color
+                this.designService.textbuttonColor = this.designService.buttons[this.index].textcolor
+
+                break;
                 case 'Input': this.index=this.designService.getIndex(this.designService.inputs,id)   
                 this.designService.textinput= this.designService.inputs[this.index].InnerHtml;break;
                 case 'Text': this.index=this.designService.getIndex(this.designService.texts,id)   
-                this.designService.textlabel= this.designService.texts[this.index].InnerHtml;break;
+                this.designService.textlabel= this.designService.texts[this.index].InnerHtml;
+                this.designService.textcolor = this.designService.texts[this.index].color
+
+                break;
                 
               }
               
@@ -454,11 +461,15 @@ showPopUp(event:any,idpopup:any,idclose:any,type:any) {
               this.nbpopupOpned=0;
               switch(type){
                 case 'Button': this.designService.buttons[this.index].InnerHtml = this.designService.textButton
-                this.appService.ModifiyLabel(this.designService.textButton,this.designService.buttons[this.index].id).subscribe();break;
+                this.designService.buttons[this.index].color = this.designService.buttonColor
+                this.designService.buttons[this.index].textcolor = this.designService.textbuttonColor
+
+                this.appService.ModifiyLabel(this.designService.textButton,this.designService.buttonColor,this.designService.textbuttonColor,this.designService.buttons[this.index].id).subscribe();break;
                 case 'Input':  this.designService.inputs[this.index].InnerHtml = this.designService.textinput
-                this.appService.ModifiyLabel(this.designService.textinput,this.designService.inputs[this.index].id).subscribe();break;
+                this.appService.ModifiyLabel(this.designService.textinput,null,null,this.designService.inputs[this.index].id).subscribe();break;
                 case 'Text':  this.designService.texts[this.index].InnerHtml = this.designService.textlabel
-                this.appService.ModifiyLabel(this.designService.textlabel,this.designService.texts[this.index].id).subscribe();break;
+                this.designService.texts[this.index].color = this.designService.textcolor
+                this.appService.ModifiyLabel(this.designService.textlabel,this.designService.textcolor,null,this.designService.texts[this.index].id).subscribe();break;
                 
               }
              
@@ -572,7 +583,7 @@ showIcon(event: any) {
                               
                               if(this.designService.listeIcon[k].id==id){
                                 this.designService.listeIcon[k].InnerHtml=iconNameTrimmed;
-                                this.appService.ModifiyLabel(iconNameTrimmed,id).subscribe()
+                                this.appService.ModifiyLabel(iconNameTrimmed,null,null,id).subscribe()
                                 test=true
                                 break;
                               }
@@ -607,9 +618,8 @@ openModal(id:any) {
 closeModal() {
  
   $('#myModal').modal('hide'); 
- 
   this.designService.lists[this.index].InnerHtml = this.designService.textlist
-  this.appService.ModifiyLabel(this.designService.textlist,this.designService.lists[this.index].id).subscribe();
+  this.appService.ModifiyLabel(this.designService.textlist,null,null,this.designService.lists[this.index].id).subscribe();
   const iddb = sessionStorage.getItem('id_db')
   if(iddb)
   this.appService.getIdEntityByDatabase(parseInt(iddb,10),this.designService.textlist).subscribe((data:any)=>{

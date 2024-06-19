@@ -27,6 +27,10 @@ export class DesignServiceService {
   textinput="Type a placeholder here ...."
   textlist=""
   itemsTaken :any //screens by app
+  buttonColor= '#ffffff' // default color
+  textcolor =""
+  buttonclor=""
+  textbuttonColor=""
   constructor(private appservice:AppCreationServiceService) { }
   getScreenByApp(){
     const id_app= sessionStorage.getItem('app')

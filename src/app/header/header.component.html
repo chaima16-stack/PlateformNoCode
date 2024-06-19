@@ -47,7 +47,24 @@
 
 
               </ul>
-     
+       <div class="dropdownalert">
+    <div>
+        <a class="dropalert"  (click)="toggleDropdownalert()">
+            <div class="selected-app"><i style="color:red" class="bi bi-exclamation-triangle-fill"></i>
+                                <span class="badge">{{nberrors}}</span>
+
+            </div>
+        </a>
+    </div>
+    <div class="alertdropdown-content" [ngStyle]="{'display': isDropdownOpenalert ? 'block' : 'none' }">
+        <div class="dropdown-title">Errors</div>
+        <div class="dropdown-divider"></div>
+        <a *ngFor=" let error of workflowservice.errors">
+            <i style="margin-right:10px;" class="bi bi-exclamation-triangle-fill"></i>{{error.type}}: {{error.description}}
+        </a>
+         
+    </div>
+</div>
                 <button (click)="openModal()"  class="btn preview-btn my-2 my-sm-0" type="submit">Preveiw</button>
             </div>
    <div class="dropdownSetting">

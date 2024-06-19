@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth-service/auth.service';
 import { DatabaseServiceService } from '../services/database-service/database-service.service';
 import { DesignServiceService } from '../services/design-service/design-service.service';
 import { Router } from '@angular/router';
+import { WorkflowService } from '../services/workflow/workflow.service';
 declare var $: any;
 
 @Component({
@@ -16,9 +17,12 @@ export class HeaderComponent implements OnInit {
   screenchoice=""
   isDropdownOpen: boolean = false; // Variable pour suivre l'état du dropdown
   isDropdownOpenSetting =false
-constructor(private router: Router,private authservice:AuthService,private dbservice:DatabaseServiceService, public appService: AppCreationServiceService,public appCreationService: AppCreationServiceService,public designService:DesignServiceService){}
+  isDropdownOpenalert =false
+nberrors=0;
+constructor(private router: Router,public workflowservice:WorkflowService ,private authservice:AuthService,private dbservice:DatabaseServiceService, public appService: AppCreationServiceService,public appCreationService: AppCreationServiceService,public designService:DesignServiceService){}
 ngOnInit(): void {
   //liste des apps d'user connecté 
+  this.nberrors= this.workflowservice.errors.length
   let token = sessionStorage.getItem("loggedInUser");
   this.authservice.decodeToken(token).subscribe((response:any)=>{
   this.appService.getAppByUser(parseInt(response.user_id,10)).subscribe((response)=>{
@@ -71,7 +75,11 @@ ngOnInit(): void {
 
   }
   toggleDropdownSetting() {
+    
     this.isDropdownOpenSetting = !this.isDropdownOpenSetting;
+  }
+  toggleDropdownalert() {
+    this.isDropdownOpenalert = !this.isDropdownOpenalert;
   }
   // Fonction pour basculer l'état du dropdown
   toggleDropdown() {

@@ -45,7 +45,9 @@ import { PreviewModule } from './preview/preview.module';
     CdkDrag,
     AppRoutingModule,
     HttpClientModule,
-    PreviewModule
+    PreviewModule,
+
+
     
 
   ],

@@ -17,8 +17,9 @@ elements:any[]=[]
 alertVisible: boolean = false;
   alertMessage: string = '';
   alerts:any
+  alerterror:boolean=false;
 ngOnInit(): void {
-  
+  this.workflowservice.errors=[]
     this.workflowservice.alerts=[]
     const app=sessionStorage.getItem('app');
     const screen = sessionStorage.getItem('idscreen')
@@ -28,12 +29,17 @@ ngOnInit(): void {
     if(screen)
     this.appService.getElmentByScreen(parseInt(screen)).subscribe((response:any)=>{
       const elementsArray = Array.isArray(response) ? response : [response];
+      if(elementsArray.length==0) {this.workflowservice.errors.push({'type':"Elment", "description": "No elements added yet"})
+        this.alerterror=true
+    }
        for(let i=0;i<elementsArray.length;i++){
         const element={
            id: elementsArray[i].id_element,
            label : elementsArray[i].label,
            position: elementsArray[i].position,
            type_element: elementsArray[i].type_element,
+           color: elementsArray[i].color,
+           textcolor: elementsArray[i].textcolor,
            value:"",
            type_input:'',
            screen :elementsArray[i].screen
@@ -48,6 +54,10 @@ ngOnInit(): void {
             element.type_input='text'
           })
 
+        }if(elementsArray[i].type_element=='Data List') {
+          this.workflowservice.errors.push({'type':"Page Type", "description": "the type of the page is incorrect (is Authentification or sifn up page)"})
+          this.alerterror=true
+
         }
         this.elements.push(element)
        }
@@ -56,11 +66,12 @@ ngOnInit(): void {
     if(app)
     this.workflowservice.getEvents(parseInt(app,10)).subscribe((response:any)=>{
       const eventsArray = Array.isArray(response) ? response : [response];
-      console.log(eventsArray)
+      if(eventsArray.length==0) {this.workflowservice.errors.push({'type':"Event", "description": "No events added yet"})
+        this.alerterror=true
+    }
       for(let i=0;i<eventsArray.length;i++){
         switch (eventsArray[i].type) {
           case 'User is logged in':
-            console.log("hi")
             this.handleUserLoggedIn(eventsArray[i].id);
             break;
           case 'User is logged out':
@@ -76,7 +87,10 @@ ngOnInit(): void {
             
                 this.renderer.listen(elementRef, 'click', () => this.handleElementClicked(eventsArray[i].id,eventsArray[i].element));
               }
-            }//else error
+            }else {
+              this.workflowservice.errors.push({"type":eventsArray[i].type, "description": "error in element chosen"})
+              this.alerterror=true
+            }
             break;
           default:
             console.warn('Unknown event type:', eventsArray[i].type);
@@ -94,7 +108,9 @@ handleUserSignIn(idevent:any){
     this.workflowservice.getActions(idevent).subscribe((response:any)=>{
     
       const actionsArray = Array.isArray(response) ? response : [response];
-     
+      if(actionsArray.length==0) {this.workflowservice.errors.push({'type':"Action", "description": "No action added yet"})
+        this.alerterror=true
+    }
       for(let i=0;i<actionsArray.length;i++){
       
     
@@ -103,7 +119,6 @@ handleUserSignIn(idevent:any){
              this.signUserUp(actionsArray[i].id);
             break;
           case 'Log the user in':
-            
               this.logUserIn(actionsArray[i].id)
             break;
           case 'Sign/login with google':
@@ -128,7 +143,7 @@ handleUserSignIn(idevent:any){
            if(user || sign ){
           this.gotopage(actionsArray[i].id)}
             break;
-          
+           
         }
       }
     
@@ -141,7 +156,9 @@ if(user){
   this.workflowservice.getActions(idevent).subscribe((response:any)=>{
   
     const actionsArray = Array.isArray(response) ? response : [response];
-   
+    if(actionsArray.length==0){ this.workflowservice.errors.push({'type':"Action", "description": "No action added yet"})
+      this.alerterror=true
+  }
     for(let i=0;i<actionsArray.length;i++){
     
   
@@ -189,7 +206,9 @@ handleUserLoggedOut(idevent:any){
     this.workflowservice.getActions(idevent).subscribe((response:any)=>{
     
       const actionsArray = Array.isArray(response) ? response : [response];
-     
+      if(actionsArray.length==0) {this.workflowservice.errors.push({'type':"Action", "description": "No action added yet"})
+        this.alerterror=true
+    }
       for(let i=0;i<actionsArray.length;i++){
       
     
@@ -236,7 +255,9 @@ handleElementClicked(idevent:any,idelement:any){
  this.workflowservice.getActions(idevent).subscribe((response:any)=>{
   
   const actionsArray = Array.isArray(response) ? response : [response];
- 
+  if(actionsArray.length==0) {this.workflowservice.errors.push({'type':"Action", "description": "No action added yet"})
+    this.alerterror=true
+  }
   for(let i=0;i<actionsArray.length;i++){
   
 
@@ -270,8 +291,7 @@ handleElementClicked(idevent:any,idelement:any){
         if(user || sign )
          this.gotopage(actionsArray[i].id)
         break;
-      default:
-        console.warn('Unknown element ID:', idelement);
+     
     }
   }
 
@@ -295,11 +315,10 @@ logUserOut(){
 closeAlert() {
   this.alertVisible = false; 
   this.workflowservice.alerts=[]
-
+this.alerterror=false
 }
 
 refresh(){
-  console.log('Refreshing the page...');
   location.reload();
 }
 logUserIn(idaction:any){
@@ -375,7 +394,7 @@ signUserUp(idaction:any){
      }
    }
    }
-   console.log(item)
+ 
    const db = sessionStorage.getItem('dbconnected');
    if (db) {
    this.dbservice.getData(db, 'User').subscribe((response: any) => {
@@ -387,7 +406,10 @@ signUserUp(idaction:any){
      this.alerts={type:"success",message:'Informations are corrects'}
      this.dbservice.insertData(db,'User',item).subscribe()
      sessionStorage.setItem("signup","true")
-    }else{//error
+    }else{         
+      this.workflowservice.errors.push({'type':"Action", "description": "inputs chosen are not corrects"})
+      this.alerterror=true
+
     }
 
    } else {
