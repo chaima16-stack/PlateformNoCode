@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 export class WorkflowService {
   private apiUrl = 'http://127.0.0.1:8000/';
   constructor(private http: HttpClient) { }
+  errors: any=[]
   elements :any=[]
   alertType="danger"
   alerts:any=[]
@@ -97,5 +98,23 @@ getToken(id:string){
   const params = new HttpParams().set('id',id);
 
   return this.http.get(this.apiUrl+'/Token',{ params })
+}
+addError(type:string, event :any, action:any, description:string, date_creation:Date){
+  const body= {
+    event: event,
+    type: type,
+    action:action,
+    description:description,
+    date_creation: date_creation.toISOString().slice(0, 10),  // Convertit la date en format ISO (YYYY-MM-DD)
+    date_update: date_creation.toISOString().slice(0, 10)
+  }
+  return this.http.post(this.apiUrl+ 'errors/',body)
+}
+geterrorbyevent(id_event:any){
+  const params = new HttpParams().set('event',id_event);
+return this.http.get(this.apiUrl+'/ErrorAction', {params})
+}
+deleteError(id:number){
+  return this.http.delete(this.apiUrl+'errors/'+id)
 }
 }

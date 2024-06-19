@@ -103,9 +103,9 @@ getScreenbyId(id:number){
   return this.http.get(this.apiUrl+'screens/'+id)
 }
 
-ModifiyLabel(label:string, id:string){
+ModifiyLabel(label:string,color:any,textcolor:any, id:string){
 
-  return this.http.patch(this.apiUrl+ 'elements/'+id +'/', {"label":label }) .pipe(
+  return this.http.patch(this.apiUrl+ 'elements/'+id +'/', {"label":label , "color":color, "textcolor":textcolor}) .pipe(
     catchError(this.handleError) 
   );
 }

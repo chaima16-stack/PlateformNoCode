@@ -24,12 +24,12 @@ export class CrudComponent {
   formData='insert'
   idattributeselected:any;
   databaseconnected='';
-
+alerterror : boolean = false
   ngOnInit(): void {
    sessionStorage.setItem('userconnected','1')
    sessionStorage.setItem('signup','true')
    this.workflowservice.alerts=[]
-
+this.workflowservice.errors=[]
   const app=sessionStorage.getItem('app');
   const screen = sessionStorage.getItem('idscreen')
   this.databaseconnected=sessionStorage.getItem('dbconnected') || '';
@@ -38,12 +38,17 @@ export class CrudComponent {
       if(screen)
       this.appService.getElmentByScreen(parseInt(screen)).subscribe((response:any)=>{
         const elementsArray = Array.isArray(response) ? response : [response];
+        if(elementsArray.length==0) {this.workflowservice.errors.push({'type':"Elment", "description": "No elements added yet"})
+          this.alerterror=true
+      }
          for(let i=0;i<elementsArray.length;i++){
           const element={
              id: elementsArray[i].id_element,
              label : elementsArray[i].label,
              position: elementsArray[i].position,
              type_element: elementsArray[i].type_element,
+             color: elementsArray[i].color,
+             textcolor: elementsArray[i].textcolor,
              value:"",
              attributes : [],
              data : [],
@@ -84,8 +89,10 @@ export class CrudComponent {
       if(app)
       this.workflowservice.getEvents(parseInt(app,10)).subscribe((response:any)=>{
         const eventsArray = Array.isArray(response) ? response : [response];
-        console.log(eventsArray)
-        for(let i=0;i<eventsArray.length;i++){
+        if(eventsArray.length==0) {this.workflowservice.errors.push({'type':"Event", "description": "No events added yet"})
+          this.alerterror=true
+      }
+          for(let i=0;i<eventsArray.length;i++){
           switch (eventsArray[i].type) {
             case 'User is logged in':
               console.log("hi")
@@ -106,7 +113,11 @@ export class CrudComponent {
                   console.log(elementRef)
                   this.renderer.listen(elementRef, 'click', () => this.handleElementClicked(eventsArray[i].id,eventsArray[i].element));
                 }
-              }//else error
+              }else{
+                this.workflowservice.errors.push({"type":eventsArray[i].type, "description": "error in element chosen"})
+                this.alerterror=true
+
+              }
               break;
             default:
               console.warn('Unknown event type:', eventsArray[i].type);
@@ -129,7 +140,9 @@ generateArray(n:number): number[] {
       this.workflowservice.getActions(idevent).subscribe((response:any)=>{
       
         const actionsArray = Array.isArray(response) ? response : [response];
-       
+        if(actionsArray.length==0) {this.workflowservice.errors.push({'type':"Action", "description": "No action added yet"})
+          this.alerterror=true
+      }
         for(let i=0;i<actionsArray.length;i++){
         
       
@@ -176,7 +189,9 @@ generateArray(n:number): number[] {
     this.workflowservice.getActions(idevent).subscribe((response:any)=>{
     
       const actionsArray = Array.isArray(response) ? response : [response];
-     
+      if(actionsArray.length==0) {this.workflowservice.errors.push({'type':"Action", "description": "No action added yet"})
+        this.alerterror=true
+    }
       for(let i=0;i<actionsArray.length;i++){
       
     
@@ -224,7 +239,9 @@ generateArray(n:number): number[] {
       this.workflowservice.getActions(idevent).subscribe((response:any)=>{
       
         const actionsArray = Array.isArray(response) ? response : [response];
-       
+        if(actionsArray.length==0) {this.workflowservice.errors.push({'type':"Action", "description": "No action added yet"})
+          this.alerterror=true
+      }
         for(let i=0;i<actionsArray.length;i++){
         
       
@@ -271,7 +288,9 @@ generateArray(n:number): number[] {
    this.workflowservice.getActions(idevent).subscribe((response:any)=>{
     
     const actionsArray = Array.isArray(response) ? response : [response];
-   
+    if(actionsArray.length==0) {this.workflowservice.errors.push({'type':"Action", "description": "No action added yet"})
+      this.alerterror=true
+  }
     for(let i=0;i<actionsArray.length;i++){
     
   
@@ -422,7 +441,9 @@ generateArray(n:number): number[] {
        this.alerts={type:"success",message:'Informations are corrects'}
        this.dbservice.insertData(db,'User',item).subscribe()
        sessionStorage.setItem("signup","true")
-      }else{//error
+      }else{      this.workflowservice.errors.push({'type':"Action", "description": "inputs chosen are not corrects"})
+      this.alerterror=true
+
       }
   
      } else {

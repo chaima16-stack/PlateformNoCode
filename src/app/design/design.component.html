@@ -142,6 +142,9 @@
           id="{{ button.id }}"
           class="buttonsdropped btn btn-primary d-grid text-uppercase fw-bold"
           [ngStyle]="button.style"
+          [style.borderColor]="button.color"
+          [style.background]="button.color"
+          [style.color]="button.textcolor"
           (dragstart)="ModifyDrag($event, 'Button')"
           (dragend)="UpdateList($event, 'Button', true)"
           [draggable]="true"
@@ -154,6 +157,7 @@
           id="{{ text.id }}"
           class=" texte"
           [ngStyle]="text.style"
+          [style.color]="text.color"
           (dragstart)="ModifyDrag($event, 'Text')"
           [draggable]="true"
           (dragend)="UpdateList($event, 'Text', true)"
@@ -281,7 +285,22 @@
         placeholder="..edit me.."
         [(ngModel)]="designService.textButton"
       />
-      <button routerLink="/Workflow" *ngIf="typepopup == 'Button'" class="popup-button">
+      <!-- Add Color Picker for Button Color -->
+<div class="color-picker-container" *ngIf="typepopup == 'Text'">
+  <label>Choose the color:</label>
+  <input type="color" class="color-input"  [(ngModel)]="designService.textcolor">
+</div>
+<div class="color-picker-container" *ngIf="typepopup == 'Button'">
+  <label>Color of background:</label>
+  <input type="color" class="color-input"  id="colorbutton" [(ngModel)]="designService.buttonColor">
+  
+</div>
+<div class="color-picker-container" *ngIf="typepopup == 'Button'">
+  
+  <label>Choose the color :</label>
+  <input type="color" class="color-input"  id="textcolorbutton" [(ngModel)]="designService.textbuttonColor">
+</div>
+      <button routerLink="/Workflow" *ngIf="typepopup == 'Button'" id="input" class="popup-button">
         Add Workflow
       </button>
     </div>

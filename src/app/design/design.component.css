@@ -349,6 +349,24 @@
   margin: 5px;
   cursor: pointer;
 }
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  margin: 10px 0; /* Optionnel : pour ajouter un espace autour du conteneur */
+}
+
+.color-picker-container label {
+  margin-right: 10px; /* Optionnel : pour ajouter un espace entre le label et l'input */
+}
+
+.color-picker-container .color-input {
+  width: 50px; /* Ajustez cette valeur selon vos besoins */
+  height: 30px; /* Ajustez cette valeur selon vos besoins */
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
 
 .icon-option i {
   font-size: 24px;
